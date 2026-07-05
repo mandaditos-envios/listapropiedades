@@ -56,9 +56,6 @@
         .panel-salida { margin-top: 35px; }
         .resultado-box { background: #0f172a; color: #f8fafc; padding: 25px; border-radius: 12px; font-family: 'Courier New', Courier, monospace; font-size: 13px; white-space: pre-wrap; line-height: 1.6; border: 1px solid #334155; max-height: 500px; overflow-y: auto; text-align: left; }
         
-        /* Vista de lectura limpia cómoda */
-        .vista-lectura-box { background: #f1f5f9; color: #1e293b; padding: 30px; border-radius: 12px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; white-space: pre-wrap; line-height: 1.7; border: 1px solid #cbd5e1; max-height: 500px; overflow-y: auto; text-align: left; margin-top: 15px; box-shadow: inset 0 2px 8px rgba(0,0,0,0.02); }
-
         .panel-guardar-final { background: #f8fafc; border: 1px solid var(--border); padding: 20px; border-radius: 12px; margin-top: 25px; display: flex; gap: 10px; align-items: flex-end; }
     </style>
 </head>
@@ -205,15 +202,8 @@
         </div>
     </div>
 
-    <!-- 👓 NUEVA VISTA SOLO DE LECTURA (FONDO CLARO) -->
-    <div class="panel-salida" style="margin-top: 40px;">
-        <h2>👓 Vista Solo para Lectura (Fondo Claro)</h2>
-        <div class="vista-lectura-box" id="resultadoLectura">Completá los parámetros para leer...</div>
-    </div>
-
-    <!-- 📋 PANEL DE COPIADO (FONDO OSCURO) -->
-    <div class="panel-salida" style="margin-top: 30px;">
-        <h2>📋 Cuadro para Copiar Texto (Fondo Oscuro)</h2>
+    <div class="panel-salida">
+        <h2>📋 Vista Previa de la Ficha Técnica</h2>
         <div class="resultado-box" id="resultadoTexto">Completá los parámetros requeridos...</div>
         <button class="btn btn-success" onclick="copiarTextoFicha()">📋 Copiar Texto de la Ficha</button>
     </div>
@@ -251,101 +241,119 @@
     }
 
     function calcularPreciosYFicha() {
-        try {
-            // 1. Título Autogenerado
-            const operacionNode = document.querySelector('input[name="operacion"]:checked');
-            const operacion = operacionNode ? operacionNode.value : 'Alquiler';
-            const dorms = document.getElementById('dormitorios').value;
-            
-            let tituloConstruido = `Departamento de ${dorms} en ${operacion.toLowerCase()}`;
-            document.getElementById('titulo_automatico').value = tituloConstruido;
+        // 1. Título Autogenerado
+        const operacion = document.querySelector('input[name="operacion"]:checked').value;
+        const dorms = document.getElementById('dormitorios').value;
+        
+        let tituloConstruido = `Departamento de ${dorms} en ${operacion.toLowerCase()}`;
+        document.getElementById('titulo_automatico').value = tituloConstruido;
 
-            // 2. Extraer valores financieros
-            const mensual = parseFloat(document.getElementById('valor_mensual').value) || 0;
-            const tiempoTxt = document.getElementById('tiempo_contrato').value || '24 meses';
-            
-            // Autocompletar el alquiler adelantado sugerido si está vacío
-            if (mensual > 0 && !document.getElementById('g_adelantado').value) {
-                document.getElementById('g_adelantado').value = mensual;
-            }
+        // 2. Extraer valores financieros
+        const mensual = parseFloat(document.getElementById('valor_mensual').value) || 0;
+        const tiempoTxt = document.getElementById('tiempo_contrato').value || '24 meses';
+        
+        // Autocompletar el alquiler adelantado sugerido si está vacío
+        if (mensual > 0 && !document.getElementById('g_adelantado').value) {
+            document.getElementById('g_adelantado').value = mensual;
+        }
 
-            // Detectar número de meses para multiplicar de forma automatizada
-            let mesesNumero = parseInt(tiempoTxt.replace(/\D/g, '')) || 24;
-            let totalContratoCalculado = mensual * mesesNumero;
+        // Detectar número de meses para multiplicar de forma automatizada
+        let mesesNumero = parseInt(tiempoTxt.replace(/\D/g, '')) || 24;
+        let totalContratoCalculado = mensual * mesesNumero;
 
-            const adelantado = parseFloat(document.getElementById('g_adelantado').value) || 0;
-            const sellado = parseFloat(document.getElementById('g_sellado').value) || 0;
-            const honorarios = parseFloat(document.getElementById('g_honorarios').value) || 0;
-            const deposito = parseFloat(document.getElementById('g_deposito').value) || 0; 
+        const adelantado = parseFloat(document.getElementById('g_adelantado').value) || 0;
+        const sellado = parseFloat(document.getElementById('g_sellado').value) || 0;
+        const honorarios = parseFloat(document.getElementById('g_honorarios').value) || 0;
+        const deposito = parseFloat(document.getElementById('g_deposito').value) || 0; // Solo tendrá valor si está en Efectivo
 
-            let totalIngreso = adelantado + sellado + honorarios + deposito;
+        let totalIngreso = adelantado + sellado + honorarios + deposito;
 
-            // 3. Formatear datos para el cuerpo del mensaje
-            const edif = document.getElementById('nombre_edificio').value.trim();
-            const edifString = edif ? ` Edificio ${edif}` : '';
+        // 3. Formatear datos para el cuerpo del mensaje
+        const edif = document.getElementById('nombre_edificio').value.trim();
+        const edifString = edif ? ` Edificio ${edif}` : '';
 
-            const expensasChoice = document.querySelector('input[name="tiene_expensas"]:checked').value;
-            let expensasLineaTxt = 'No';
-            if (expensasChoice === 'Sí') {
-                const expMonto = parseFloat(document.getElementById('monto_expensas').value) || 0;
-                expensasLineaTxt = `$${expMonto.toLocaleString('es-AR', { minimumFractionDigits: 2 })} "(Aproximadamente)"`;
-            }
+        const expensasChoice = document.querySelector('input[name="tiene_expensas"]:checked').value;
+        let expensasLineaTxt = 'No';
+        if (expensasChoice === 'Sí') {
+            const expMonto = parseFloat(document.getElementById('monto_expensas').value) || 0;
+            expensasLineaTxt = `$${expMonto.toLocaleString('es-AR', { minimumFractionDigits: 2 })} "(Aproximadamente)"`;
+        }
 
-            const descExtras = document.getElementById('detalle_ambientes').value.trim() || 'Ninguna';
+        const descExtras = document.getElementById('detalle_ambientes').value.trim() || 'Ninguna';
 
-            const cochera = document.querySelector('input[name="cochera"]:checked').value;
-            const mascotas = document.querySelector('input[name="mascotas"]:checked').value;
-            const balcon = document.querySelector('input[name="balcon"]:checked').value;
-            const gimnasio = document.querySelector('input[name="gimnasio"]:checked').value;
-            const pileta = document.querySelector('input[name="pileta"]:checked').value;
-            const sum = document.querySelector('input[name="sum"]:checked').value;
+        const cochera = document.querySelector('input[name="cochera"]:checked').value;
+        const mascotas = document.querySelector('input[name="mascotas"]:checked').value;
+        const balcon = document.querySelector('input[name="balcon"]:checked').value;
+        const gimnasio = document.querySelector('input[name="gimnasio"]:checked').value;
+        const pileta = document.querySelector('input[name="pileta"]:checked').value;
+        const sum = document.querySelector('input[name="sum"]:checked').value;
 
-            const txtMensual = mensual > 0 ? "$" + mensual.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$0,00';
-            const txtTotalContrato = totalContratoCalculado > 0 ? "$" + totalContratoCalculado.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$0,00';
-            
-            const txtAdelantado = adelantado > 0 ? "$" + adelantado.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$0,00';
-            const txtSellado = sellado > 0 ? "$" + sellado.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$0,00';
-            
-            const depositoChoice = document.querySelector('input[name="deposito_tipo"]:checked').value;
-            let txtDepositoFicha = 'Pagaré';
-            if (depositoChoice === 'Monto en Efectivo') {
-                txtDepositoFicha = deposito > 0 ? "Efectivo $" + deposito.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : 'Efectivo $0,00';
-            }
+        const txtMensual = mensual > 0 ? "$" + mensual.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$0,00';
+        const txtTotalContrato = totalContratoCalculado > 0 ? "$" + totalContratoCalculado.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$0,00';
+        
+        const txtAdelantado = adelantado > 0 ? "$" + adelantado.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$0,00';
+        const txtSellado = sellado > 0 ? "$" + sellado.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$0,00';
+        
+        const depositoChoice = document.querySelector('input[name="deposito_tipo"]:checked').value;
+        let txtDepositoFicha = 'Pagaré';
+        if (depositoChoice === 'Monto en Efectivo') {
+            txtDepositoFicha = depósito > 0 ? "Efectivo $" + deposito.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : 'Efectivo $0,00';
+        }
 
-            const txtHonorarios = honorarios > 0 ? "$" + honorarios.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$0,00';
-            const txtTotalAPagar = totalIngreso > 0 ? "$" + totalIngreso.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$0,00';
+        const txtHonorarios = honorarios > 0 ? "$" + honorarios.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$0,00';
+        const txtTotalAPagar = totalIngreso > 0 ? "$" + totalIngreso.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$0,00';
 
-            // 4. Construcción Estricta del Formato Solicitado
-            let f = `CORTES PROPIEDADES\n`;
-            f += `Corrientes 2581\n`;
-            f += `Romina S. Cortes Matrícula CCPIM - N° 180\n`;
-            f += `Martillera pública y corredora de comercio\n\n`;
-            
-            f += `DETALLE: ${tituloConstruido}${edifString}\n`;
-            f += `Expensas: ${expensasLineaTxt}\n`;
-            f += `Descripción extras: ${descExtras}\n\n`;
-            
-            f += `• Cochera: ${cochera}\n`;
-            f += `• Aceptan mascotas: ${mascotas}\n`;
-            f += `• Balcón: ${balcon}\n`;
-            f += `• Gimnasio: ${gimnasio}\n`;
-            f += `• Pileta: ${pileta}\n`;
-            f += `• SUM: ${sum}\n\n`;
-            
-            f += `TIEMPO DE CONTRATO: ${tiempoTxt}\n`;
-            f += `AJUSTE: Cuatrimestral ICL\n`;
-            f += `VALOR MENSUAL: ${txtMensual}\n`;
-            f += `TOTAL CONTRATO X ${tiempoTxt}: ${txtTotalContrato}\n\n`;
-            
-            f += `GASTOS\n`;
-            f += `Alquiler adelantado: ${txtAdelantado}\n`;
-            f += `50% Sellado DRG: ${txtSellado}\n`;
-            f += `Depósito de garantía: ${txtDepositoFicha}\n`;
-            f += `Honorarios inmobiliarios: ${txtHonorarios}\n`;
-            f += `Escribanía cada parte\n\n`;
-            
-            f += `TOTAL A PAGAR: ${txtTotalAPagar}\n\n`;
-            
-            f += `REQUISITOS\n\n`;
-            f += `Inquilino con recibo de sueldo, monotributista o IVA Responsable Inscripto.\n`;
-     
+        // 4. Construcción Estricta del Formato Solicitado
+        let f = `CORTES PROPIEDADES\n`;
+        f += `Corrientes 2581\n`;
+        f += `Romina S. Cortes Matrícula CCPIM - N° 180\n`;
+        f += `Martillera pública y corredora de comercio\n\n`;
+        
+        f += `DETALLE: ${tituloConstruido}${edifString}\n`;
+        f += `Expensas: ${expensasLineaTxt}\n`;
+        f += `Descripción extras: ${descExtras}\n\n`;
+        
+        f += `• Cochera: ${cochera}\n`;
+        f += `• Aceptan mascotas: ${mascotas}\n`;
+        f += `• Balcón: ${balcon}\n`;
+        f += `• Gimnasio: ${gimnasio}\n`;
+        f += `• Pileta: ${pileta}\n`;
+        f += `• SUM: ${sum}\n\n`;
+        
+        f += `TIEMPO DE CONTRATO: ${tiempoTxt}\n`;
+        f += `AJUSTE: Cuatrimestral ICL\n`;
+        f += `VALOR MENSUAL: ${txtMensual}\n`;
+        f += `TOTAL CONTRATO X ${tiempoTxt}: ${txtTotalContrato}\n\n`;
+        
+        f += `GASTOS\n`;
+        f += `Alquiler adelantado: ${txtAdelantado}\n`;
+        f += `50% Sellado DRG: ${txtSellado}\n`;
+        f += `Depósito de garantía: ${txtDepositoFicha}\n`;
+        f += `Honorarios inmobiliarios: ${txtHonorarios}\n`;
+        f += `Escribanía cada parte\n\n`;
+        
+        f += `TOTAL A PAGAR: ${txtTotalAPagar}\n\n`;
+        
+        f += `REQUISITOS\n\n`;
+        f += `Inquilino con recibo de sueldo, monotributista o IVA Responsable Inscripto.\n`;
+        f += `Garante con recibo de sueldo, monotributista o IVA Responsable Inscripto.\n`;
+        f += `En caso de no poseer garantes, contratar un seguro de caución.\n`;
+        f += `Seguro contra incendios.\n\n`;
+        
+        f += `INQUILINO\n\n`;
+        f += `Fotocopia DNI frente y dorso.\n`;
+        f += `Constancia de CUIL o CUIT.\n`;
+        f += `Fotocopia de los últimos 3 recibos de sueldo o últimos 3 meses de monotributo / IVA Responsable Inscripto DDJJ.\n`;
+        f += `Mail y teléfono celular.\n\n`;
+        
+        f += `GARANTES\n\n`;
+        f += `Fotocopia DNI frente y dorso.\n`;
+        f += `Constancia de CUIL o CUIT.\n`;
+        f += `Fotocopia de los últimos 3 recibos de sueldo o últimos 3 meses de monotributo / IVA Responsable Inscripto DDJJ.\n`;
+        f += `Mail y teléfono celular.\n\n`;
+        
+        f += `CONDICIONES\n\n`;
+        f += `Las reservas/señas se realizan con el 50% del valor del alquiler.\n`;
+        f += `Se otorgan 5 días hábiles para presentar la documentación necesaria.\n`;
+        f += `En caso de presentar algún requisito y haya sido rechazado, se otorgan 2 días más para volver a presentar.\n`;
+        f += `Si no se presen
