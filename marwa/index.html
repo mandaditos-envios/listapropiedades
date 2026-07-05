@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- MODIFICAR AQUÍ: El nombre que aparece arriba en la pestaña del navegador -->
     <title>Propiedad Marva</title>
     
     <style>
@@ -19,59 +18,91 @@
         .barra-navegacion { max-width: 800px; margin: 0 auto; padding: 20px; }
         .btn-volver { display: inline-flex; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500; }
         .contenedor { max-width: 800px; margin: 0 auto; padding: 0 20px 100px 20px; }
-        .galeria-principal { width: 100%; height: 400px; border-radius: 24px; overflow: hidden; box-shadow: 0 4px 30px rgba(0,0,0,0.03); margin-bottom: 30px; }
-        .foto-principal { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* 📸 ESTILOS DEL CARRUSEL (DESLIZABLE CON EL DEDO EN CELULARES) */
+        .carrusel-contenedor { position: relative; width: 100%; height: 400px; border-radius: 24px; overflow: hidden; box-shadow: 0 4px 30px rgba(0,0,0,0.03); margin-bottom: 30px; }
+        .carrusel-track { display: flex; width: 100%; height: 100%; overflow-x: scroll; scroll-snap-type: x mandatory; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+        .carrusel-track::-webkit-scrollbar { display: none; } /* Ocultar barra de scroll molesta */
+        .carrusel-item { flex: 0 0 100%; width: 100%; height: 100%; scroll-snap-align: start; position: relative; }
+        .carrusel-foto { width: 100%; height: 100%; object-fit: cover; cursor: pointer; }
+        
+        /* Botones de flechas del carrusel */
+        .carrusel-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 18px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 10; }
+        .carrusel-btn.prev { left: 15px; }
+        .carrusel-btn.next { right: 15px; }
+
+        /* Indicador de fotos (ej: 1 / 3) */
+        .carrusel-contador { position: absolute; bottom: 15px; right: 15px; background: rgba(15, 23, 42, 0.75); color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; backdrop-filter: blur(4px); z-index: 10; }
+
+        /* 🔍 ESTILOS DE LA PANTALLA COMPLETA (MAXIMIZADO) */
+        .lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 1000; justify-content: center; align-items: center; }
+        .lightbox-contenido { max-width: 90%; max-height: 80%; object-fit: contain; border-radius: 8px; }
+        .lightbox-close { position: absolute; top: 20px; right: 25px; color: white; font-size: 35px; font-weight: bold; cursor: pointer; }
+        .lightbox-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+        .lightbox-btn:hover { background: rgba(255,255,255,0.4); }
+        .lightbox-btn.prev { left: 20px; }
+        .lightbox-btn.next { right: 20px; }
+
+        /* Resto de estilos limpios */
         .header-propiedad { border-bottom: 1px solid var(--border); padding-bottom: 24px; margin-bottom: 24px; }
         .precio { font-size: 36px; font-weight: 800; color: var(--primary); margin: 0 0 10px 0; }
         h1 { font-size: 26px; font-weight: 700; color: var(--primary); margin: 0 0 15px 0; letter-spacing: -0.5px; }
-        .ubicacion { color: var(--text-muted); font-size: 15px; display: flex; align-items: center; gap: 6px; }
+        .ubicacion { color: var(--text-muted); font-size: 15px; }
         .seccion { margin-bottom: 35px; }
         .seccion h2 { font-size: 18px; font-weight: 700; color: var(--primary); margin: 0 0 12px 0; }
         .descripcion { font-size: 16px; color: var(--text-main); line-height: 1.7; margin: 0; }
         .requisitos-box { background: #f8fafc; border: 1px solid var(--border); padding: 24px; border-radius: 16px; }
         .requisitos-list { margin: 0; padding-left: 20px; }
         .requisitos-list li { font-size: 15px; color: var(--text-main); margin-bottom: 10px; line-height: 1.5; }
-        .requisitos-list li:last-child { margin-bottom: 0; }
         .area-contacto { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 16px 20px; border-top: 1px solid var(--border); box-shadow: 0 -10px 30px rgba(0,0,0,0.04); display: flex; justify-content: center; z-index: 100; }
-        .btn-whatsapp { width: 100%; max-width: 400px; text-align: center; background: var(--accent); color: white; text-decoration: none; padding: 14px; border-radius: 12px; font-weight: 600; font-size: 16px; transition: background 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-whatsapp:hover { background: var(--accent-hover); }
+        .btn-whatsapp { width: 100%; max-width: 400px; text-align: center; background: var(--accent); color: white; text-decoration: none; padding: 14px; border-radius: 12px; font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; }
         @media (min-width: 850px) {
             .area-contacto { position: relative; border: none; box-shadow: none; padding: 0; margin-top: 40px; justify-content: flex-start; }
             .btn-whatsapp { max-width: 280px; }
-            .galeria-principal { height: 480px; }
+            .carrusel-contenedor { height: 480px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- BOTÓN VOLVER (Pone dos puntos antes de index para que "salga" de la carpeta marva hacia la portada) -->
     <div class="barra-navegacion">
         <a href="../index.html" class="btn-volver">← Volver al catálogo</a>
     </div>
 
     <div class="contenedor">
         
-        <!-- 📸 [FOTO] MODIFICAR AQUÍ: Como está adentro de la carpeta 'marva', ponés solo el nombre de la foto (ej: principal.jpg) -->
-        <div class="galeria-principal">
-            <img class="foto-principal" src="marwa1.jpg" alt="Foto de la propiedad">
+        <!-- 📸 [CARRUSEL DE FOTOS] MODIFICAR AQUÍ -->
+        <div class="carrusel-contenedor">
+            <button class="carrusel-btn prev" onclick="moverCarrusel(-1)">❮</button>
+            <button class="carrusel-btn next" onclick="moverCarrusel(1)">❯</button>
+            <div class="carrusel-contador" id="contador">1 / 3</div>
+            
+            <div class="carrusel-track" id="track" onscroll="detectarFoto()">
+                <!-- FOTO 1 (Esta se usará de miniatura) -->
+                <div class="carrusel-item">
+                    <img class="carrusel-foto" src="foto1.jpg" alt="Fachada" onclick="abrirMaximizado(0)">
+                </div>
+                <!-- FOTO 2 -->
+                <div class="carrusel-item">
+                    <img class="carrusel-foto" src="foto2.jpg" alt="Living" onclick="abrirMaximizado(1)">
+                </div>
+                <!-- FOTO 3 -->
+                <div class="carrusel-item">
+                    <img class="carrusel-foto" src="foto3.jpg" alt="Cocina" onclick="abrirMaximizado(2)">
+                </div>
+            </div>
         </div>
         
         <div class="header-propiedad">
-            <!-- 💰 [PRECIO] MODIFICAR AQUÍ -->
-            <p class="precio">$ 700.000 <span style="font-size: 16px; font-weight: 400; color: var(--text-muted);">/ mes</span></p>
-            
-            <!-- 🏷️ [TÍTULO DE LA PROPIEDAD] MODIFICAR AQUÍ -->
-            <h1>Hermoso departamento en alquiler en edificio Marva</h1>
-            
-            <!-- 📍 [UBICACIÓN] MODIFICAR AQUÍ -->
+            <p class="precio">$ 500.000 <span style="font-size: 16px; font-weight: 400; color: var(--text-muted);">/ mes</span></p>
+            <h1>Hermosa Casa Propiedad Marva</h1>
             <div class="ubicacion">📍 Zona Centro, Tu Ciudad</div>
         </div>
         
         <div class="seccion">
             <h2>Descripción de la propiedad</h2>
-            <!-- 📝 [TEXTO DE DESCRIPCIÓN] MODIFICAR AQUÍ -->
             <p class="descripcion">
-                Acá podés escribir en detalle todo lo que ofrece la propiedad Marva. Por ejemplo: Cuenta con 3 ambientes amplios, cocina comedor reciclada, living luminoso, patio privado y cochera techada. Excelente distribución y mantenimiento.
+                Acá podés escribir en detalle todo lo que ofrece la propiedad Marva. Cuenta con ambientes amplios, cocina comedor reciclada, living luminoso, patio privado y cochera techada.
             </p>
         </div>
         
@@ -79,7 +110,6 @@
             <div class="requisitos-box">
                 <h2>📋 Requisitos de Ingreso</h2>
                 <ul class="requisitos-list">
-                    <!-- 📌 [REQUISITOS] MODIFICAR AQUÍ (Escribí los tuyos) -->
                     <li>Mes de adelanto y mes de depósito.</li>
                     <li>Garantía o seguro de caución a satisfacción.</li>
                     <li>Demostración de ingresos comprobables.</li>
@@ -87,15 +117,69 @@
             </div>
         </div>
 
-        <!-- 💬 [BOTÓN DE WHATSAPP] MODIFICAR AQUÍ -->
         <div class="area-contacto">
-            <!-- Poné tu número real reemplazando el 5491100000000 (sin espacios ni el +) -->
-            <a href="https://wa.me/5491100000000?text=Hola!%20Me%20interesa%20obtener%20información%20sobre%20la%20propiedad%20Marva" class="btn-whatsapp" target="_blank">
+            <a href="https://wa.me/5491100000000?text=Hola!%20Me%20interesa%20la%20propiedad%20Marva" class="btn-whatsapp" target="_blank">
                 💬 Consultar por WhatsApp
             </a>
         </div>
-        
     </div>
+
+    <!-- 🔍 PANTALLA COMPLETA (OCULTA POR DEFECTO) -->
+    <div class="lightbox" id="miLightbox">
+        <span class="lightbox-close" onclick="cerrarMaximizado()">&times;</span>
+        <button class="lightbox-btn prev" onclick="cambiarFotoMaximizada(-1)">❮</button>
+        <button class="lightbox-btn next" onclick="cambiarFotoMaximizada(1)">❯</button>
+        <img class="lightbox-contenido" id="imgMaximizada">
+    </div>
+
+    <!-- ⚙️ CÓDIGO INTELIGENTE PARA QUE TODO FUNCIONE (NO TOCAR) -->
+    <script>
+        // Lista con las fotos. Si agregas más arriba, agregalas acá con coma
+        const fotos = ['foto1.jpg', 'foto2.jpg', 'foto3.jpg'];
+        let indiceActual = 0;
+
+        const track = document.getElementById('track');
+        const contador = document.getElementById('contador');
+        const lightbox = document.getElementById('miLightbox');
+        const imgMaximizada = document.getElementById('imgMaximizada');
+
+        // Mueve el carrusel normal con las flechitas
+        function moverCarrusel(direccion) {
+            const anchoItem = track.clientWidth;
+            track.scrollLeft += (direccion * anchoItem);
+        }
+
+        // Detecta qué foto está viendo el usuario al deslizar con el dedo
+        function detectarFoto() {
+            const anchoItem = track.clientWidth;
+            const indice = Math.round(track.scrollLeft / anchoItem);
+            contador.innerText = `${indice + 1} / ${fotos.length}`;
+        }
+
+        // Abre la foto en pantalla completa
+        function abrirMaximizado(indice) {
+            indiceActual = indice;
+            imgMaximizada.src = fotos[indiceActual];
+            lightbox.style.display = 'flex';
+        }
+
+        function cerrarMaximizado() {
+            lightbox.style.display = 'none';
+        }
+
+        // Pasa las fotos dentro de la pantalla completa
+        function cambiarFotoMaximizada(direccion) {
+            indiceActual += direccion;
+            if (indiceActual >= fotos.length) indiceActual = 0;
+            if (indiceActual < 0) indiceActual = fotos.length - 1;
+            imgMaximizada.src = fotos[indiceActual];
+        }
+
+        // Cerrar al tocar el fondo negro
+        lightbox.addEventListener('click', function(e) {
+            if (e.target === lightbox) cerrarMaximizado();
+        });
+    </script>
 
 </body>
 </html>
