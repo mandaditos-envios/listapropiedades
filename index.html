@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRM Interno - Cortes Propiedades</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <title>Sistema Interno - Cortes Propiedades</title>
     <style>
         :root {
             --primary: #0f172a;
@@ -17,17 +16,24 @@
             --text: #334155;
         }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 30px 15px; -webkit-font-smoothing: antialiased; }
-        .contenedor { max-width: 850px; margin: 0 auto; background: var(--card-bg); padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04); border: 1px solid var(--border); }
+        .contenedor { max-width: 800px; margin: 0 auto; background: var(--card-bg); padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04); border: 1px solid var(--border); }
         
-        .header-sistema { text-align: center; border-bottom: 2px solid var(--border); padding-bottom: 20px; margin-bottom: 30px; }
-        .header-sistema h1 { font-size: 28px; font-weight: 800; color: var(--primary); margin: 0 0 5px 0; letter-spacing: -0.5px; }
-        .header-sistema p { font-size: 14px; color: #64748b; margin: 0; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        .header-sistema { text-align: center; border-bottom: 2px solid var(--border); padding-bottom: 20px; margin-bottom: 30px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        .header-sistema h1 { font-size: 26px; font-weight: 800; color: var(--primary); margin: 0 0 5px 0; letter-spacing: -0.5px; }
+        .header-sistema p { font-size: 13px; color: #64748b; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
 
-        .panel-guardado { background: #f1f5f9; padding: 20px; border-radius: 12px; margin-bottom: 30px; border: 1px solid var(--border); }
-        .grid-guardado { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
-        .flex-input { flex: 1; min-width: 200px; }
+        /* Botón superior de archivo */
+        .btn-archivo-trigger { background: #f1f5f9; border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px; color: var(--primary-light); font-weight: 600; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; }
+        .btn-archivo-trigger:hover { background: #e2e8f0; }
+        
+        .lista-guardados { display: none; background: #f1f5f9; border: 1px solid var(--border); padding: 15px; border-radius: 10px; margin-bottom: 25px; }
+        .lista-guardados h4 { margin: 0 0 10px 0; font-size: 13px; text-transform: uppercase; color: var(--primary); }
+        .grid-items-guardados { display: flex; flex-wrap: wrap; gap: 8px; }
+        .item-guardado { background: #fff; border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-weight: 500; }
+        .item-guardado:hover { border-color: var(--accent); background: #f8fafc; }
+        .btn-borrar-item { color: #ef4444; border: none; background: none; font-weight: bold; cursor: pointer; padding: 0 2px; }
 
-        h2 { font-size: 15px; font-weight: 700; color: var(--primary); margin: 30px 0 15px 0; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; }
+        h2 { font-size: 14px; font-weight: 700; color: var(--primary); margin: 30px 0 15px 0; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; }
         h2::after { content: ''; flex: 1; height: 1px; background: var(--border); }
         .campo { margin-bottom: 18px; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
@@ -35,32 +41,22 @@
         @media (max-width: 600px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
         
         label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 13px; color: var(--primary-light); }
-        input[type="text"], input[type="number"], textarea, select { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; box-sizing: border-box; background: #fff; color: var(--text); transition: border 0.2s, box-shadow 0.2s; }
+        input[type="text"], input[type="number"], textarea, select { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; box-sizing: border-box; background: #fff; color: var(--text); }
         input:focus, textarea:focus, select:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
-        textarea { height: 80px; resize: vertical; }
+        textarea { height: 70px; resize: vertical; }
 
         .opciones-grupo { display: flex; gap: 10px; flex-wrap: wrap; }
-        .opciones-grupo label { font-weight: 500; font-size: 14px; background: #fff; border: 1px solid var(--border); padding: 8px 14px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; margin: 0; user-select: none; transition: background 0.2s, border 0.2s; }
+        .opciones-grupo label { font-weight: 500; font-size: 14px; background: #fff; border: 1px solid var(--border); padding: 8px 14px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; margin: 0; user-select: none; }
         
         .btn { padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
         .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-light); }
-        .btn-accent { background: var(--accent); color: white; }
-        .btn-accent:hover { background: var(--accent-hover); }
-        .btn-danger { background: #ef4444; color: white; }
-        .btn-danger:hover { background: #dc2626; }
-        .btn-success { background: #10b981; color: white; }
+        .btn-success { background: #10b981; color: white; width: 100%; padding: 14px; font-size: 15px; margin-top: 15px; }
         .btn-success:hover { background: #059669; }
-        .btn-block { width: 100%; padding: 14px; font-size: 15px; margin-top: 10px; }
-
-        .resultado-box { background: #0f172a; color: #f8fafc; padding: 25px; border-radius: 12px; font-family: 'Courier New', Courier, monospace; font-size: 13px; white-space: pre-wrap; line-height: 1.6; margin-top: 15px; border: 1px solid #334155; max-height: 400px; overflow-y: auto; }
-
-        #render-pdf { display: none; padding: 40px; font-family: Arial, sans-serif; color: #1e293b; background: white; }
-        .pdf-header { text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 15px; margin-bottom: 25px; }
-        .pdf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
-        .pdf-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
-        .pdf-box h3 { margin: 0 0 10px 0; font-size: 14px; color: #0f172a; text-transform: uppercase; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; }
-        .pdf-total { background: #f0fdf4; border: 2px solid #bbf7d0; color: #166534; font-size: 18px; font-weight: bold; padding: 15px; border-radius: 8px; text-align: center; }
+        
+        .panel-salida { margin-top: 35px; }
+        .resultado-box { background: #0f172a; color: #f8fafc; padding: 25px; border-radius: 12px; font-family: 'Courier New', Courier, monospace; font-size: 13px; white-space: pre-wrap; line-height: 1.6; border: 1px solid #334155; max-height: 450px; overflow-y: auto; }
+        
+        .panel-guardar-final { background: #f8fafc; border: 1px solid var(--border); padding: 20px; border-radius: 12px; margin-top: 20px; display: flex; gap: 10px; align-items: flex-end; }
     </style>
 </head>
 <body>
@@ -68,88 +64,77 @@
 <div class="contenedor">
     <div class="header-sistema">
         <h1>CORTES PROPIEDADES</h1>
-        <p>Base de Guías y Generador Institucional</p>
+        <p>Generador y Registro de Fichas Técnicas</p>
+        <button class="btn-archivo-trigger" onclick="alternarListaGuardados()">📂 Ver Propiedades Guardadas</button>
     </div>
 
-    <!-- 💾 PANEL DE GUARDADO Y CARGA LOCAL -->
-    <div class="panel-guardado">
-        <label style="font-size:14px; margin-bottom:10px;">💾 Buscador / Archivador de Guías:</label>
-        <div class="grid-guardado">
-            <div class="flex-input">
-                <label for="id_propiedad">Nombre único de la propiedad:</label>
-                <input type="text" id="id_propiedad" placeholder="Ej: Marva, Propiedad Centro">
-            </div>
-            <button class="btn btn-primary" onclick="guardarPropiedad()">Guardar / Actualizar</button>
-        </div>
-        <div class="campo" style="margin-top: 15px; margin-bottom:0;">
-            <label for="select_propiedades">📂 Archivo de Propiedades Guardadas:</label>
-            <div style="display:flex; gap:10px;">
-                <select id="select_propiedades" style="flex:1;">
-                    <option value="">-- Elegir de la lista para cargar --</option>
-                </select>
-                <button class="btn btn-accent" onclick="cargarPropiedad()">Cargar Ficha</button>
-                <button class="btn btn-danger" onclick="eliminarPropiedad()">Borrar</button>
-            </div>
+    <!-- PANEL DESPLEGABLE DE REGISTROS GUARDADOS -->
+    <div class="lista-guardados" id="boxGuardados">
+        <h4>📋 Propiedades Archivadas:</h4>
+        <div class="grid-items-guardados" id="contenedorItemsGuardados">
+            <!-- Items de LocalStorage de manera limpia -->
         </div>
     </div>
 
-    <!-- FORMULARIO DE INGRESO SECUENCIAL -->
-    <h2>📌 Clasificación Inicial</h2>
-    
-    <div class="grid-2">
+    <!-- CLASIFICACIÓN (SISTEMA DE TÍTULO AUTOMÁTICO) -->
+    <h2>📌 Clasificación del Inmueble</h2>
+    <div class="grid-3">
         <div class="campo">
             <label>Operación:</label>
             <div class="opciones-grupo">
-                <label><input type="radio" name="operacion" value="Alquiler" checked onchange="actualizarTodo()"> Alquiler</label>
-                <label><input type="radio" name="operacion" value="Venta" onchange="actualizarTodo()"> Venta</label>
+                <label><input type="radio" name="operacion" value="Alquiler" checked onchange="calcularTodo()"> Alquiler</label>
+                <label><input type="radio" name="operacion" value="Venta" onchange="calcularTodo()"> Venta</label>
             </div>
         </div>
         <div class="campo">
             <label>Tipo de Inmueble:</label>
             <div class="opciones-grupo">
-                <label><input type="radio" name="tipo_inmueble" value="Departamento" checked onchange="actualizarTodo()"> Departamento</label>
-                <label><input type="radio" name="tipo_inmueble" value="Casa" onchange="actualizarTodo()"> Casa</label>
+                <label><input type="radio" name="tipo_inmueble" value="Departamento" checked onchange="calcularTodo()"> Departamento</label>
+                <label><input type="radio" name="tipo_inmueble" value="Casa" onchange="alwaysChangeType()"> Casa</label>
             </div>
+        </div>
+        <div class="campo">
+            <label for="nombre_edificio">Nombre del Edificio / Complejo:</label>
+            <input type="text" id="nombre_edificio" placeholder="Ej: Edificio Marwa" oninput="calcularTodo()">
         </div>
     </div>
 
     <div class="campo">
-        <label for="titulo">Título de la Publicación / Ficha:</label>
-        <input type="text" id="titulo" placeholder="Ej: Hermoso departamento céntrico con balcón" oninput="actualizarTodo()">
+        <label>Título Autogenerado:</label>
+        <input type="text" id="titulo_automatico" style="background: #f1f5f9; font-weight: bold; color: var(--primary);" readonly>
     </div>
 
-    <h2>📊 Detalles de la Descripción (Ambientes y Comodidades)</h2>
-    
+    <h2>📊 Características e Infraestructura</h2>
     <div class="grid-3">
         <div class="campo">
-            <label for="dormitorios">Dormitorios (Hasta 5):</label>
-            <select id="dormitorios" onchange="actualizarTodo()">
+            <label for="dormitorios">Dormitorios:</label>
+            <select id="dormitorios" onchange="calcularTodo()">
                 <option value="Monoambiente">Monoambiente</option>
-                <option value="1 Dormitorio" selected>1 Dormitorio</option>
-                <option value="2 Dormitorios">2 Dormitorios</option>
-                <option value="3 Dormitorios">3 Dormitorios</option>
-                <option value="4 Dormitorios">4 Dormitorios</option>
-                <option value="5 Dormitorios">5 Dormitorios</option>
+                <option value="1 dormitorio" selected>1 dormitorio</option>
+                <option value="2 dormitorios">2 dormitorios</option>
+                <option value="3 dormitorios">3 dormitorios</option>
+                <option value="4 dormitorios">4 dormitorios</option>
+                <option value="5 dormitorios">5 dormitorios</option>
             </select>
         </div>
         <div class="campo">
-            <label for="banos">Baños (Hasta 5):</label>
-            <select id="banos" onchange="actualizarTodo()">
-                <option value="1 Baño" selected>1 Baño</option>
-                <option value="2 Baños">2 Baños</option>
-                <option value="3 Baños">3 Baños</option>
-                <option value="4 Baños">4 Baños</option>
-                <option value="5 Baños">5 Baños</option>
+            <label for="banos">Baños:</label>
+            <select id="banos" onchange="calcularTodo()">
+                <option value="1 baño" selected>1 baño</option>
+                <option value="2 baños">2 baños</option>
+                <option value="3 baños">3 baños</option>
+                <option value="4 baños">4 baños</option>
+                <option value="5 baños">5 baños</option>
             </select>
         </div>
         <div class="campo">
-            <label for="ambientes">Ambientes Totales (Hasta 5):</label>
-            <select id="ambientes" onchange="actualizarTodo()">
-                <option value="1 Ambiente">1 Ambiente</option>
-                <option value="2 Ambientes" selected>2 Ambientes</option>
-                <option value="3 Ambientes">3 Ambientes</option>
-                <option value="4 Ambientes">4 Ambientes</option>
-                <option value="5 Ambientes">5 Ambientes</option>
+            <label for="ambientes">Ambientes Totales:</label>
+            <select id="ambientes" onchange="calcularTodo()">
+                <option value="1 ambiente">1 ambiente</option>
+                <option value="2 ambientes" selected>2 ambientes</option>
+                <option value="3 ambientes">3 ambientes</option>
+                <option value="4 ambientes">4 ambientes</option>
+                <option value="5 ambientes">5 ambientes</option>
             </select>
         </div>
     </div>
@@ -158,141 +143,129 @@
         <div class="campo">
             <label>Cochera:</label>
             <div class="opciones-grupo">
-                <label><input type="radio" name="cochera" value="Sí" onchange="actualizarTodo()"> Sí</label>
-                <label><input type="radio" name="cochera" value="No" checked onchange="actualizarTodo()"> No</label>
+                <label><input type="radio" name="cochera" value="Sí" onchange="calcularTodo()"> Sí</label>
+                <label><input type="radio" name="cochera" value="No" checked onchange="calcularTodo()"> No</label>
             </div>
         </div>
         <div class="campo">
             <label>Aceptan mascotas:</label>
             <div class="opciones-grupo">
-                <label><input type="radio" name="mascotas" value="Sí" onchange="actualizarTodo()"> Sí</label>
-                <label><input type="radio" name="mascotas" value="No" checked onchange="actualizarTodo()"> No</label>
-                <label><input type="radio" name="mascotas" value="A consultar" onchange="actualizarTodo()"> A consultar</label>
+                <label><input type="radio" name="mascotas" value="Sí" onchange="calcularTodo()"> Sí</label>
+                <label><input type="radio" name="mascotas" value="No" checked onchange="calcularTodo()"> No</label>
+                <label><input type="radio" name="mascotas" value="A consultar" onchange="calcularTodo()"> A consultar</label>
             </div>
         </div>
     </div>
 
     <div class="campo">
-        <label>Amenities del Edificio / Complejo:</label>
+        <label>Amenities:</label>
         <div class="opciones-grupo">
-            <label><input type="checkbox" id="gimnasio" onchange="actualizarTodo()"> Gimnasio</label>
-            <label><input type="checkbox" id="piscina" onchange="actualizarTodo()"> Piscina</label>
-            <label><input type="checkbox" id="sum" onchange="actualizarTodo()"> SUM</label>
+            <label><input type="checkbox" id="gimnasio" onchange="calcularTodo()"> Gimnasio</label>
+            <label><input type="checkbox" id="piscina" onchange="calcularTodo()"> Piscina</label>
+            <label><input type="checkbox" id="sum" onchange="calcularTodo()"> SUM</label>
         </div>
     </div>
 
     <div class="campo">
-        <label for="detalle_ambientes">Detalle adicional o texto libre:</label>
-        <textarea id="detalle_ambientes" placeholder="Ej: Cocina amoblada independiente, termotanque instalado, excelente vista..." oninput="actualizarTodo()"></textarea>
+        <label for="gmaps_input">📍 Ubicación (Dirección o Link de Google Maps):</label>
+        <input type="text" id="gmaps_input" placeholder="Ej: Corrientes 2581 o pega el enlace de compartir de Google Maps" oninput="calcularTodo()">
     </div>
 
-    <h2>💼 Información Legal y Económica del Contrato</h2>
-    
     <div class="campo">
-        <label for="depto_tipo">Dirección exacta / Piso y Letra:</label>
-        <input type="text" id="depto_tipo" placeholder="Ej: Corrientes 1500, Piso 4 Depto C" oninput="actualizarTodo()">
+        <label for="detalle_ambientes">Descripción y Detalles del Inmueble:</label>
+        <textarea id="detalle_ambientes" placeholder="Ej: Departamento 1 habitación, cocina amoblada, luminoso..." oninput="calcularTodo()"></textarea>
     </div>
 
+    <h2>💼 Parámetros del Contrato</h2>
     <div class="grid-2">
         <div class="campo">
-            <label for="tiempo_contrato">Tiempo de contrato:</label>
-            <input type="text" id="tiempo_contrato" value="24 Meses" oninput="actualizarTodo()">
+            <label for="valor_mensual">Valor Mensual ($):</label>
+            <input type="number" id="valor_mensual" placeholder="Ej: 700000" oninput="calcularPreciosAutomáticos()">
         </div>
         <div class="campo">
-            <label for="valor_mensual">Valor Mensual Inicial ($ Solo números):</label>
-            <input type="number" id="valor_mensual" placeholder="Ej: 500000" oninput="calcularPrecios()">
+            <label for="total_contrato">Total Contrato X 24 Meses:</label>
+            <input type="text" id="total_contrato" style="background: #f8fafc; font-weight: bold;" readonly>
         </div>
     </div>
 
-    <div class="campo">
-        <label for="total_contrato">Total Contrato X 24 Meses:</label>
-        <input type="text" id="total_contrato" oninput="actualizarTodo()">
-    </div>
-
-    <h2>💰 Liquidación de Requisitos y Gastos de Ingreso</h2>
-    
+    <h2>💰 Liquidación de Ingreso (Montos de Gastos)</h2>
     <div class="grid-2">
         <div class="campo">
             <label for="g_adelantado">Alquiler Adelantado ($):</label>
-            <input type="number" id="g_adelantado" oninput="calcularPrecios()">
+            <input type="number" id="g_adelantado" oninput="calcularPreciosAutomáticos()">
         </div>
         <div class="campo">
             <label for="g_sellado">50% Sellado DRG ($):</label>
-            <input type="number" id="g_sellado" oninput="calcularPrecios()">
+            <input type="number" id="g_sellado" oninput="calcularPreciosAutomáticos()">
         </div>
     </div>
 
     <div class="campo">
-        <label>Depósito de Garantía (Múltiple Choice):</label>
-        <div class="opciones-grupo" style="margin-bottom: 10px;">
-            <label><input type="radio" name="deposito_tipo" value="Pagaré" checked onchange="alternarDeposito(this.value)"> Firmar Pagaré (No suma al total)</label>
-            <label><input type="radio" name="deposito_tipo" value="Monto en Efectivo" onchange="alternarDeposito(this.value)"> Monto en Efectivo (Suma al total)</label>
+        <label>Depósito de Garantía:</label>
+        <div class="opciones-grupo" style="margin-bottom: 12px;">
+            <label><input type="radio" name="deposito_tipo" value="Pagaré" checked onchange="alternarDepositoEfectivo(this.value)"> Pagaré (No suma al efectivo de ingreso)</label>
+            <label><input type="radio" name="deposito_tipo" value="Monto en Efectivo" onchange="alternarDepositoEfectivo(this.value)"> Depósito en Efectivo (Suma al ingreso)</label>
         </div>
-        <input type="number" id="g_deposito" placeholder="Escribí el monto en efectivo del depósito" style="display:none;" oninput="calcularPrecios()">
+        <input type="number" id="g_deposito" placeholder="Ingresá el monto del depósito en efectivo" style="display:none;" oninput="calcularPreciosAutomáticos()">
     </div>
 
     <div class="campo">
         <label for="g_honorarios">Honorarios Inmobiliarios ($):</label>
-        <input type="number" id="g_honorarios" oninput="calcularPrecios()">
+        <input type="number" id="g_honorarios" oninput="calcularPreciosAutomáticos()">
     </div>
 
-    <!-- PANELES DE ACCIÓN -->
-    <h2 style="margin-top:40px;">📋 Transcripción Final Estructurada (Formato WhatsApp)</h2>
-    <div class="resultado-box" id="resultadoTexto">Completá los datos para armar la guía técnica...</div>
-    
-    <div class="grid-2">
-        <button class="btn btn-success btn-block" onclick="copiarAlPortapapeles()">📋 Copiar Texto de la Ficha</button>
-        <button class="btn btn-accent btn-block" onclick="descargarPresentacionPDF()">📄 Descargar Ficha PDF Profesional</button>
+    <!-- PANEL DE VISTA PREVIA Y ACCIÓN DE COPIADO -->
+    <div class="panel-salida">
+        <h2>📋 Vista Previa de la Ficha Técnica</h2>
+        <div class="resultado-box" id="resultadoTexto">Completá los parámetros del formulario...</div>
+        <button class="btn btn-success" onclick="copiarAlPortapapeles()">📋 Copiar Texto de la Ficha</button>
     </div>
-</div>
 
-<!-- FORMATO DE PRESENTACIÓN EN PDF (OCULTO) -->
-<div id="render-pdf">
-    <div class="pdf-header">
-        <h1 style="margin:0; font-size:26px; color:#0f172a;">CORTES PROPIEDADES</h1>
-        <p style="margin:5px 0 0 0; font-size:12px; color:#475569; letter-spacing:1px;">Corrientes 2581 | Romina S. Cortes Matrícula CCPIM N° 180</p>
-    </div>
-    <h2 id="pdf-titulo" style="font-size:20px; color:#0f172a; margin-bottom:20px; border:none; padding:0;"></h2>
-    <div class="pdf-grid">
-        <div class="pdf-box">
-            <h3>📊 Características</h3>
-            <p id="pdf-caract" style="margin:0; font-size:13px; line-height:1.6; white-space:pre-line;"></p>
+    <!-- GUARDADO POR NOMBRE EN LA PARTE INFERIOR -->
+    <div class="panel-guardar-final">
+        <div style="flex: 1;">
+            <label for="id_propiedad" style="color: var(--primary); font-weight: 700;">💾 Guardar esta Guía para el Futuro:</label>
+            <input type="text" id="id_propiedad" placeholder="Ej: Marva 1B, Casa Palermo">
         </div>
-        <div class="pdf-box">
-            <h3>🏢 Detalles del Contrato</h3>
-            <p id="pdf-contrato" style="margin:0; font-size:13px; line-height:1.6; white-space:pre-line;"></p>
-        </div>
-    </div>
-    <div class="pdf-box">
-        <h3>💰 Gastos de Ingreso Calculados</h3>
-        <p id="pdf-gastos" style="margin:0; font-size:13px; line-height:1.6; white-space:pre-line;"></p>
-    </div>
-    <div class="pdf-total" id="pdf-total-box"></div>
-    <div class="pdf-box" style="margin-top:20px; background:#f1f5f9;">
-        <h3>📋 Requisitos y Condiciones Institucionales</h3>
-        <p style="margin:0; font-size:10px; line-height:1.5; color:#475569;">
-            • Inquilino y Garante con recibo de sueldo, Monotributo o IVA Responsable Inscripto.<br>
-            • Copia de DNI frente y dorso + Constancia CUIL/CUIT de todas las partes.<br>
-            • Seguro contra incendios obligatorio.<br>
-            • Las reservas se realizan con el 50% del valor del alquiler. 5 días hábiles para presentar papeles.
-        </p>
+        <button class="btn btn-primary" onclick="guardarPropiedadLocal()" style="height: 42px;">Guardar Ficha</button>
     </div>
 </div>
 
 <script>
-    let totalGlobal = 0;
+    let totalIngresoGlobal = 0;
 
-    function alternarDeposito(tipo) {
-        document.getElementById('g_deposito').style.display = (tipo === 'Monto en Efectivo') ? 'block' : 'none';
-        if(tipo === 'Pagaré') document.getElementById('g_deposito').value = '';
-        calcularPrecios();
+    function alternarListaGuardados() {
+        const box = document.getElementById('boxGuardados');
+        box.style.display = (box.style.display === 'block') ? 'none' : 'block';
     }
 
-    function calcularPrecios() {
+    function alwaysChangeType() {
+        calcularTodo();
+    }
+
+    function alternarDepositoEfectivo(tipo) {
+        const inputDep = document.getElementById('g_deposito');
+        if (tipo === 'Monto en Efectivo') {
+            inputDep.style.display = 'block';
+        } else {
+            inputDep.style.display = 'none';
+            inputDep.value = '';
+        }
+        calcularPreciosAutomáticos();
+    }
+
+    function calcularPreciosAutomáticos() {
         const mensual = parseFloat(document.getElementById('valor_mensual').value) || 0;
-        if(mensual > 0) {
-            document.getElementById('total_contrato').value = "$ " + (mensual * 24).toLocaleString('es-AR');
-            if(!document.getElementById('g_adelantado').value) document.getElementById('g_adelantado').value = mensual;
+        
+        // Autocompletar total de contrato x 24 meses
+        if (mensual > 0) {
+            document.getElementById('total_contrato').value = "$ " + (mensual * 24).toLocaleString('es-AR', { minimumFractionDigits: 2 });
+            // Relleno sugerido inicial de adelanto si está vacío
+            if (!document.getElementById('g_adelantado').value) {
+                document.getElementById('g_adelantado').value = mensual;
+            }
+        } else {
+            document.getElementById('total_contrato').value = '';
         }
 
         const adelantado = parseFloat(document.getElementById('g_adelantado').value) || 0;
@@ -300,60 +273,97 @@
         const honorarios = parseFloat(document.getElementById('g_honorarios').value) || 0;
         const deposito = parseFloat(document.getElementById('g_deposito').value) || 0;
 
-        totalGlobal = adelantado + sellado + honorarios + deposito;
-        actualizarTodo();
+        // Suma estricta de los gastos iniciales requeridos
+        totalIngresoGlobal = adelantado + sellado + honorarios + deposito;
+        calcularTodo();
     }
 
-    function obtenerDatosEstructurados() {
-        const op = document.querySelector('input[name="operacion"]:checked').value;
-        const tInm = document.querySelector('input[name="tipo_inmueble"]:checked').value;
-        const t = document.getElementById('titulo').value || '[Sin Título]';
+    function calcularTodo() {
+        // 1. Manejo del Título Dinámico
+        const operacion = document.querySelector('input[name="operacion"]:checked').value;
+        const tipoInmueble = document.querySelector('input[name="tipo_inmueble"]:checked').value;
+        const dorms = document.getElementById('dormitorios').value;
         
-        const dorm = document.getElementById('dormitorios').value;
+        let tituloConstruido = `${tipoInmueble} de ${dorms} en ${operacion.toLowerCase()}`;
+        // Capitalizar primera letra
+        tituloConstruido = tituloConstruido.charAt(0).toUpperCase() + tituloConstruido.slice(1);
+        document.getElementById('titulo_automatico').value = tituloConstruido;
+
+        // 2. Extracción de variables de infraestructura
+        const edif = document.getElementById('nombre_edificio').value || '';
+        const edifTxt = edif ? ` Edificio ${edif}` : '';
+        
         const banos = document.getElementById('banos').value;
         const amb = document.getElementById('ambientes').value;
-        
         const coch = document.querySelector('input[name="cochera"]:checked').value;
         const masc = document.querySelector('input[name="mascotas"]:checked').value;
-        const exp = document.getElementById('expensas').value || 'No paga';
 
-        let am = [];
-        if(document.getElementById('gimnasio').checked) am.push('Gimnasio');
-        if(document.getElementById('piscina').checked) am.push('Piscina');
-        if(document.getElementById('sum').checked) am.push('SUM');
-        const amTxt = am.length > 0 ? am.join(', ') : 'No posee';
+        let ams = [];
+        if(document.getElementById('gimnasio').checked) ams.push('Gimnasio');
+        if(document.getElementById('piscina').checked) ams.push('Piscina');
+        if(document.getElementById('sum').checked) ams.push('SUM');
+        const amenitiesTxt = ams.length > 0 ? ams.join(', ') : 'No posee';
 
-        const depto = document.getElementById('depto_tipo').value || '(completar)';
-        const det = document.getElementById('detalle_ambientes').value || '(completar)';
-        const tiempo = document.getElementById('tiempo_contrato').value || '24 Meses';
-        
-        const mVal = parseFloat(document.getElementById('valor_mensual').value) || 0;
-        const mTxt = mVal > 0 ? "$ " + mVal.toLocaleString('es-AR') : '(completar)';
-        const totalC = document.getElementById('total_contrato').value || '(completar)';
-
-        const adelVal = parseFloat(document.getElementById('g_adelantado').value) || 0;
-        const adelTxt = adelVal > 0 ? "$ " + adelVal.toLocaleString('es-AR') : '(completar)';
-        
-        const selVal = parseFloat(document.getElementById('g_sellado').value) || 0;
-        const selTxt = selVal > 0 ? "$ " + selVal.toLocaleString('es-AR') : '(completar)';
-
-        const tDep = document.querySelector('input[name="deposito_tipo"]:checked').value;
-        let depTxt = "Pagaré";
-        if(tDep === 'Monto en Efectivo') {
-            const dV = parseFloat(document.getElementById('g_deposito').value) || 0;
-            depTxt = dV > 0 ? "$ " + dV.toLocaleString('es-AR') : '(completar)';
+        const mapsInput = document.getElementById('gmaps_input').value.trim();
+        let mapsLinea = '';
+        if (mapsInput) {
+            if (mapsInput.startsWith('http')) {
+                mapsLinea = `📍 UBICACIÓN: ${mapsInput}\n`;
+            } else {
+                mapsLinea = `📍 UBICACIÓN: https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapsInput)}\n`;
+            }
         }
 
-        const honVal = parseFloat(document.getElementById('g_honorarios').value) || 0;
-        const honTxt = honVal > 0 ? "$ " + honVal.toLocaleString('es-AR') : '(completar)';
-        const totalFinalTxt = totalGlobal > 0 ? "$ " + totalGlobal.toLocaleString('es-AR') : '(completar)';
+        const detalle = document.getElementById('detalle_ambientes').value || 'Departamento 1 habitación';
 
-        return { op, tInm, t, dorm, banos, amb, coch, masc, exp, amTxt, depto, det, tiempo, mTxt, totalC, adelTxt, selTxt, depTxt, honTxt, totalFinalTxt };
-    }
+        // 3. Formateo Financiero Requisitos
+        const vMensual = parseFloat(document.getElementById('valor_mensual').value) || 0;
+        const txtMensual = vMensual > 0 ? "$ " + vMensual.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$ 0,00';
+        
+        const txtTotalContrato = document.getElementById('total_contrato').value || '$ 0,00';
 
-    function actualizarTodo() {
-        const d = obtenerDatosEstructurados();
+        const vAdelantado = parseFloat(document.getElementById('g_adelantado').value) || 0;
+        const txtAdelantado = vAdelantado > 0 ? "$ " + vAdelantado.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$ 0,00';
 
-        let f = `🏠 *FICHA DE PROPIEDAD*\n✨ *${d.t}*\n\n`;
-        f += `📊 *CARACTERÍSTICAS:*\n• Tipo de Inmueble: ${d.tInm} (${d.op})\n• Dormitorios: ${d.dorm}\n• Baños: ${d.banos}\n• Ambientes: ${d.amb}\n• Cochera: ${d.coch}\n• Aceptan mascotas: ${d.masc}\n• Expensas: ${d.exp}\n• Amenities: ${d.amTxt}\n\n`;
-        f += `💼 *CORTES PROPIEDADES*\n📍 Corrientes 2581\n📜 Romina S. Cortes Matrícula CCPIM - N° 180\n⚖️ Martillera 
+        const vSellado = parseFloat(document.getElementById('g_sellado').value) || 0;
+        const txtSellado = vSellado > 0 ? "$ " + vSellado.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$ 0,00';
+
+        const tipoDep = document.querySelector('input[name="deposito_tipo"]:checked').value;
+        let txtDep = "Pagaré";
+        if (tipoDep === 'Monto en Efectivo') {
+            const vDep = parseFloat(document.getElementById('g_deposito').value) || 0;
+            txtDep = vDep > 0 ? "$ " + vDep.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$ 0,00';
+        }
+
+        const vHonorarios = parseFloat(document.getElementById('g_honorarios').value) || 0;
+        const txtHonorarios = vHonorarios > 0 ? "$ " + vHonorarios.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$ 0,00';
+
+        const txtTotalA_Pagar = totalIngresoGlobal > 0 ? "$ " + totalIngresoGlobal.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$ 0,00';
+
+        // 4. Armado de la Ficha Exacta Separada Requerida
+        let cuerpo = `CORTES PROPIEDADES\n`;
+        cuerpo += `Corrientes 2581\n`;
+        cuerpo += `Romina S. Cortes Matrícula CCPIM - N° 180\n`;
+        cuerpo += `Martillera pública y corredora de comercio\n\n`;
+        
+        cuerpo += `${tipoInmueble}${edifTxt}\n`;
+        if (mapsLinea) cuerpo += mapsLinea;
+        cuerpo += `DETALLE: ${detalle}\n`;
+        cuerpo += `• Características: ${dorms} | ${banos} | ${amb}\n`;
+        cuerpo += `• Cochera: ${coch} | Mascotas: ${masc} | Amenities: ${amenitiesTxt}\n\n`;
+        
+        cuerpo += `TIEMPO DE CONTRATO: 24 meses\n`;
+        cuerpo += `AJUSTE: Cuatrimestral ICL\n`;
+        cuerpo += `VALOR MENSUAL: ${txtMensual}\n`;
+        cuerpo += `TOTAL CONTRATO X 24 MESES: ${txtTotalContrato}\n\n`;
+        
+        cuerpo += `GASTOS\n`;
+        cuerpo += `Alquiler adelantado: ${txtAdelantado}\n`;
+        cuerpo += `50% Sellado DRG: ${txtSellado}\n`;
+        cuerpo += `Depósito de garantía: ${txtDep}\n`;
+        cuerpo += `Honorarios inmobiliarios: ${txtHonorarios}\n`;
+        cuerpo += `Escribanía cada parte\n`;
+        cuerpo += `TOTAL A PAGAR: ${txtTotalA_Pagar}\n\n`;
+        
+        cuerpo += `REQUISITOS\n`;
+        cuerpo += `Inquilino con recibo
