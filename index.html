@@ -5,50 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mis Propiedades</title>
     <style>
-        body { font-family: sans-serif; background: #f0f2f5; text-align: center; padding: 50px; }
-        .tarjeta { background: white; max-width: 400px; margin: 20px auto; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        h1 { color: #1e293b; }
-        .precio { font-size: 24px; color: green; font-weight: bold; }
-        .btn-admin { display: inline-block; margin-top: 30px; color: #64748b; text-decoration: none; font-size: 14px; border: 1px solid #cbd5e1; padding: 5px 10px; border-radius: 5px; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f8fafc; color: #334155; margin: 0; padding: 20px; }
+        header { text-align: center; padding: 30px 0; }
+        h1 { color: #1e293b; margin: 0; }
+        .contenedor { max-width: 800px; margin: 0 auto; }
+        .propiedad { background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 30px; overflow: hidden; display: flex; flex-direction: column; }
+        .foto { width: 100%; height: 250px; object-fit: cover; }
+        .info { padding: 20px; text-align: left; }
+        .precio { font-size: 24px; color: #0f172a; font-weight: bold; margin: 0 0 10px 0; }
+        .titulo { font-size: 18px; margin: 0 0 10px 0; color: #475569; }
+        .descripcion { font-size: 14px; color: #64748b; line-height: 1.5; }
+        .requisitos { background: #f1f5f9; padding: 15px; border-radius: 8px; margin: 15px 0; }
+        .requisitos h4 { margin: 0 0 5px 0; color: #1e293b; }
+        .requisitos ul { margin: 0; padding-left: 20px; font-size: 14px; }
+        .btn-whatsapp { display: block; text-align: center; background: #25d366; color: white; text-decoration: none; padding: 12px; border-radius: 8px; font-weight: bold; margin-top: 15px; }
     </style>
-    <!-- Cargamos el administrador de respaldo por si querés activarlo -->
-    <script src="https://unpkg.com/@staticcms/core@^4.0.0/dist/static-cms-core.js"></script>
 </head>
 <body>
 
-    <h1>Catálogo de Propiedades</h1>
-    
-    <!-- Aquí se mostrarán tus propiedades -->
-    <div class="tarjeta">
-        <h2>Depto 2 Ambientes - Palermo</h2>
-        <p class="precio">$ 450.000 / mes</p>
-        <p>Requisitos: Garantía e ingresos demostrables.</p>
+    <header>
+        <h1>Mis Propiedades Disponibles</h1>
+        <p>Hacé clic en el botón para consultarme por WhatsApp</p>
+    </header>
+
+    <div class="contenedor">
+
+        <!-- PROPIEDAD 1 -->
+        <div class="propiedad">
+            <!-- Podés cambiar este link por la foto de tu propiedad -->
+            <img class="foto" src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800" alt="Foto Propiedad">
+            <div class="info">
+                <p class="precio">$ 450.000 / mes</p>
+                <h2 class="titulo">Depto 2 Ambientes con Balcón - Palermo</h2>
+                <p class="descripcion">Hermoso departamento, súper luminoso. Cuenta con cocina integrada, baño completo y habitacion con placard empotrado. Excelente zona cercana a subtes.</p>
+                <div class="requisitos">
+                    <h4>📋 Requisitos:</h4>
+                    <ul>
+                        <li>Mes de adelanto y mes de depósito.</li>
+                        <li>Garantía propietaria o seguro de caución.</li>
+                        <li>Recibo de sueldo demostrable.</li>
+                    </ul>
+                </div>
+                <!-- CAMBIA EL NUMERO LUEGO DE WA.ME/ POR EL TUYO (Sin el signo +) -->
+                <a href="https://wa.me/5491100000000?text=Hola!%20Me%20interesa%20el%20depto%20de%20Palermo" class="btn-whatsapp" target="_blank">Consultar por WhatsApp</a>
+            </div>
+        </div>
+
+        <!-- PROPIEDAD 2 -->
+        <div class="propiedad">
+            <img class="foto" src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800" alt="Foto Propiedad">
+            <div class="info">
+                <p class="precio">$ 600.000 / mes</p>
+                <h2 class="titulo">Casa PH 3 Ambientes con Patio - Colegiales</h2>
+                <p class="descripcion">PH entrada independiente sin expensas. Dos dormitorios amplios, living comedor diario, cocina reciclada a nuevo y patio con parrilla.</p>
+                <div class="requisitos">
+                    <h4>📋 Requisitos:</h4>
+                    <ul>
+                        <li>Garantía de CABA o seguro Finaer.</li>
+                        <li>Ingresos comprobables que tripliquen el alquiler.</li>
+                    </ul>
+                </div>
+                <a href="https://wa.me/5491100000000?text=Hola!%20Me%20interesa%20el%20PH%20de%20Colegiales" class="btn-whatsapp" target="_blank">Consultar por WhatsApp</a>
+            </div>
+        </div>
+
     </div>
 
-    <!-- Tu acceso secreto al panel -->
-    <a href="#admin" class="btn-admin" onclick="arrancarAdmin()">⚙️ Acceso Propietario</a>
-
-    <script>
-        function arrancarAdmin() {
-            // Si hacés clic en el acceso, transformamos la página en tu panel de control
-            document.body.innerHTML = '<div id="nc-root"></div>';
-            window.initCMS({
-                config: {
-                    backend: { name: "github", repo: "mandaditos-envios/listapropiedades", branch: "main", gatekeeper_url: "https://api.staticcms.org" },
-                    media_folder: "images", public_folder: "/images",
-                    collections: [{
-                        name: "propiedades", label: "Propiedades", folder: "_propiedades", create: true, slug: "{{slug}}",
-                        fields: [
-                            { label: "Título", name: "title", widget: "string" },
-                            { label: "Precio", name: "precio", widget: "string" },
-                            { label: "Descripción", name: "body", widget: "markdown" }
-                        ]
-                    }]
-                }
-            });
-        }
-        // Si entrás directo con #admin al final de la URL, arranca el panel
-        if(window.location.hash === '#admin') { setTimeout(arrancarAdmin, 500); }
-    </script>
 </body>
 </html>
