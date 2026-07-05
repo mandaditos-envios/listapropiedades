@@ -22,6 +22,7 @@
         .header-sistema h1 { font-size: 26px; font-weight: 800; color: var(--primary); margin: 0 0 5px 0; letter-spacing: -0.5px; }
         .header-sistema p { font-size: 13px; color: #64748b; margin: 0; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
 
+        /* Panel Fijo de Propiedades Guardadas Arriba de Todo */
         .panel-guardados-fijo { background: #f1f5f9; border: 1px solid var(--border); padding: 20px; border-radius: 12px; margin-bottom: 30px; }
         .panel-guardados-fijo h3 { margin: 0 0 12px 0; font-size: 14px; text-transform: uppercase; color: var(--primary); display: flex; align-items: center; gap: 6px; }
         .grid-items-guardados { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -44,6 +45,7 @@
 
         .opciones-grupo { display: flex; gap: 8px; flex-wrap: wrap; }
         .opciones-grupo label { font-weight: 500; font-size: 13px; background: #fff; border: 1px solid var(--border); padding: 8px 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; margin: 0; user-select: none; }
+        .opciones-grupo input[type="radio"] { margin: 0; }
         
         .btn { padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
         .btn-primary { background: var(--primary); color: white; }
@@ -52,10 +54,10 @@
         .btn-success:hover { background: #059669; }
         
         .panel-salida { margin-top: 35px; }
-        .resultado-box { background: #0f172a; color: #f8fafc; padding: 25px; border-radius: 12px; font-family: 'Courier New', Courier, monospace; font-size: 13px; white-space: pre-wrap; line-height: 1.6; border: 1px solid #334155; max-height: 400px; overflow-y: auto; text-align: left; }
+        .resultado-box { background: #0f172a; color: #f8fafc; padding: 25px; border-radius: 12px; font-family: 'Courier New', Courier, monospace; font-size: 13px; white-space: pre-wrap; line-height: 1.6; border: 1px solid #334155; max-height: 500px; overflow-y: auto; text-align: left; }
         
         /* Vista de lectura limpia cómoda */
-        .vista-lectura-box { background: #f1f5f9; color: #1e293b; padding: 30px; border-radius: 12px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; white-space: pre-wrap; line-height: 1.7; border: 1px solid #cbd5e1; max-height: 400px; overflow-y: auto; text-align: left; margin-top: 15px; box-shadow: inset 0 2px 8px rgba(0,0,0,0.02); }
+        .vista-lectura-box { background: #f1f5f9; color: #1e293b; padding: 30px; border-radius: 12px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; white-space: pre-wrap; line-height: 1.7; border: 1px solid #cbd5e1; max-height: 500px; overflow-y: auto; text-align: left; margin-top: 15px; box-shadow: inset 0 2px 8px rgba(0,0,0,0.02); }
 
         .panel-guardar-final { background: #f8fafc; border: 1px solid var(--border); padding: 20px; border-radius: 12px; margin-top: 25px; display: flex; gap: 10px; align-items: flex-end; }
     </style>
@@ -203,15 +205,17 @@
         </div>
     </div>
 
+    <!-- 👓 NUEVA VISTA SOLO DE LECTURA (FONDO CLARO) -->
     <div class="panel-salida" style="margin-top: 40px;">
         <h2>👓 Vista Solo para Lectura (Fondo Claro)</h2>
         <div class="vista-lectura-box" id="resultadoLectura">Completá los parámetros para leer...</div>
     </div>
 
+    <!-- 📋 PANEL DE COPIADO (FONDO OSCURO) -->
     <div class="panel-salida" style="margin-top: 30px;">
         <h2>📋 Cuadro para Copiar Texto (Fondo Oscuro)</h2>
         <div class="resultado-box" id="resultadoTexto">Completá los parámetros requeridos...</div>
-        <button class="btn btn-success" onclick="copiarTextoFicha()">📋 Copiar Texto de la Ficha Completa</button>
+        <button class="btn btn-success" onclick="copiarTextoFicha()">📋 Copiar Texto de la Ficha</button>
     </div>
 
     <div class="panel-guardar-final">
@@ -226,73 +230,75 @@
 <script>
     function alternarExpensasMonto(valor) {
         const inputExp = document.getElementById('monto_expensas');
-        if (inputExp) {
-            if (valor === 'Sí') {
-                inputExp.style.display = 'block';
-            } else {
-                inputExp.style.display = 'none';
-                inputExp.value = '';
-            }
+        if (valor === 'Sí') {
+            inputExp.style.display = 'block';
+        } else {
+            inputExp.style.display = 'none';
+            inputExp.value = '';
         }
         calcularPreciosYFicha();
     }
 
     function alternarDepositoMonto(valor) {
         const inputDep = document.getElementById('g_deposito');
-        if (inputDep) {
-            if (valor === 'Monto en Efectivo') {
-                inputDep.style.display = 'block';
-            } else {
-                inputDep.style.display = 'none';
-                inputDep.value = '';
-            }
+        if (valor === 'Monto en Efectivo') {
+            inputDep.style.display = 'block';
+        } else {
+            inputDep.style.display = 'none';
+            inputDep.value = '';
         }
         calcularPreciosYFicha();
     }
 
     function calcularPreciosYFicha() {
         try {
+            // 1. Título Autogenerado
             const operacionNode = document.querySelector('input[name="operacion"]:checked');
             const operacion = operacionNode ? operacionNode.value : 'Alquiler';
-            
             const dorms = document.getElementById('dormitorios').value;
             
             let tituloConstruido = `Departamento de ${dorms} en ${operacion.toLowerCase()}`;
             document.getElementById('titulo_automatico').value = tituloConstruido;
 
+            // 2. Extraer valores financieros
             const mensual = parseFloat(document.getElementById('valor_mensual').value) || 0;
             const tiempoTxt = document.getElementById('tiempo_contrato').value || '24 meses';
             
+            // Autocompletar el alquiler adelantado sugerido si está vacío
+            if (mensual > 0 && !document.getElementById('g_adelantado').value) {
+                document.getElementById('g_adelantado').value = mensual;
+            }
+
+            // Detectar número de meses para multiplicar de forma automatizada
             let mesesNumero = parseInt(tiempoTxt.replace(/\D/g, '')) || 24;
             let totalContratoCalculado = mensual * mesesNumero;
 
             const adelantado = parseFloat(document.getElementById('g_adelantado').value) || 0;
             const sellado = parseFloat(document.getElementById('g_sellado').value) || 0;
             const honorarios = parseFloat(document.getElementById('g_honorarios').value) || 0;
-            const deposito = parseFloat(document.getElementById('g_deposito').value) || 0;
+            const deposito = parseFloat(document.getElementById('g_deposito').value) || 0; 
 
             let totalIngreso = adelantado + sellado + honorarios + deposito;
 
+            // 3. Formatear datos para el cuerpo del mensaje
             const edif = document.getElementById('nombre_edificio').value.trim();
             const edifString = edif ? ` Edificio ${edif}` : '';
 
-            const expensasChoiceNode = document.querySelector('input[name="tiene_expensas"]:checked');
-            const expensasChoice = expensasChoiceNode ? expensasChoiceNode.value : 'No';
-            
+            const expensasChoice = document.querySelector('input[name="tiene_expensas"]:checked').value;
             let expensasLineaTxt = 'No';
             if (expensasChoice === 'Sí') {
                 const expMonto = parseFloat(document.getElementById('monto_expensas').value) || 0;
-                expensasLineaTxt = `$${expMonto.toLocaleString('es-AR', { minimumFractionDigits: 2 })} (Aproximadamente)`;
+                expensasLineaTxt = `$${expMonto.toLocaleString('es-AR', { minimumFractionDigits: 2 })} "(Aproximadamente)"`;
             }
 
             const descExtras = document.getElementById('detalle_ambientes').value.trim() || 'Ninguna';
 
-            const cochera = document.querySelector('input[name="cochera"]:checked')?.value || 'No';
-            const mascotas = document.querySelector('input[name="mascotas"]:checked')?.value || 'No';
-            const balcon = document.querySelector('input[name="balcon"]:checked')?.value || 'No';
-            const gimnasio = document.querySelector('input[name="gimnasio"]:checked')?.value || 'No';
-            const pileta = document.querySelector('input[name="pileta"]:checked')?.value || 'No';
-            const sum = document.querySelector('input[name="sum"]:checked')?.value || 'No';
+            const cochera = document.querySelector('input[name="cochera"]:checked').value;
+            const mascotas = document.querySelector('input[name="mascotas"]:checked').value;
+            const balcon = document.querySelector('input[name="balcon"]:checked').value;
+            const gimnasio = document.querySelector('input[name="gimnasio"]:checked').value;
+            const pileta = document.querySelector('input[name="pileta"]:checked').value;
+            const sum = document.querySelector('input[name="sum"]:checked').value;
 
             const txtMensual = mensual > 0 ? "$" + mensual.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$0,00';
             const txtTotalContrato = totalContratoCalculado > 0 ? "$" + totalContratoCalculado.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$0,00';
@@ -300,47 +306,46 @@
             const txtAdelantado = adelantado > 0 ? "$" + adelantado.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$0,00';
             const txtSellado = sellado > 0 ? "$" + sellado.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$0,00';
             
-            const depositoChoice = document.querySelector('input[name="deposito_tipo"]:checked')?.value || 'Pagaré';
-            let txtDepositoFicha = '📝 Pagaré';
+            const depositoChoice = document.querySelector('input[name="deposito_tipo"]:checked').value;
+            let txtDepositoFicha = 'Pagaré';
             if (depositoChoice === 'Monto en Efectivo') {
-                txtDepositoFicha = deposito > 0 ? "💵 Efectivo $" + deposito.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '💵 Efectivo $0,00';
+                txtDepositoFicha = deposito > 0 ? "Efectivo $" + deposito.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : 'Efectivo $0,00';
             }
 
             const txtHonorarios = honorarios > 0 ? "$" + honorarios.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$0,00';
             const txtTotalAPagar = totalIngreso > 0 ? "$" + totalIngreso.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$0,00';
 
-            let f = `🏢 CORTES PROPIEDADES\n`;
-            f += `📍 Corrientes 2581\n`;
-            f += `💼 Romina S. Cortes Matrícula CCPIM - N° 180\n`;
-            f += `📜 Martillera pública y corredora de comercio\n\n`;
+            // 4. Construcción Estricta del Formato Solicitado
+            let f = `CORTES PROPIEDADES\n`;
+            f += `Corrientes 2581\n`;
+            f += `Romina S. Cortes Matrícula CCPIM - N° 180\n`;
+            f += `Martillera pública y corredora de comercio\n\n`;
             
-            f += `🔍 DETALLE: ${tituloConstruido}${edifString}\n`;
-            f += `💵 Expensas: ${expensasLineaTxt}\n`;
-            f += `📝 Descripción extras: ${descExtras}\n\n`;
+            f += `DETALLE: ${tituloConstruido}${edifString}\n`;
+            f += `Expensas: ${expensasLineaTxt}\n`;
+            f += `Descripción extras: ${descExtras}\n\n`;
             
-            f += `🚗 Cochera: ${cochera === 'Sí' ? '✅ Sí' : '❌ No'}\n`;
-            f += `🐾 Aceptan mascotas: ${mascotas === 'Sí' ? '✅ Sí' : '❌ No'}\n`;
-            f += `🌅 Balcón: ${balcon === 'Sí' ? '✅ Sí' : '❌ No'}\n`;
-            f += `🏋️ Gimnasio: ${gimnasio === 'Sí' ? '✅ Sí' : '❌ No'}\n`;
-            f += `🏊 Pileta: ${pileta === 'Sí' ? '✅ Sí' : '❌ No'}\n`;
-            f += `🎉 SUM: ${sum === 'Sí' ? '✅ Sí' : '❌ No'}\n\n`;
+            f += `• Cochera: ${cochera}\n`;
+            f += `• Aceptan mascotas: ${mascotas}\n`;
+            f += `• Balcón: ${balcon}\n`;
+            f += `• Gimnasio: ${gimnasio}\n`;
+            f += `• Pileta: ${pileta}\n`;
+            f += `• SUM: ${sum}\n\n`;
             
-            f += `📅 TIEMPO DE CONTRATO: ${tiempoTxt}\n`;
-            f += `📈 AJUSTE: Cuatrimestral ICL\n`;
-            f += `💰 VALOR MENSUAL: ${txtMensual}\n`;
-            f += `📊 TOTAL CONTRATO X ${tiempoTxt}: ${txtTotalContrato}\n\n`;
+            f += `TIEMPO DE CONTRATO: ${tiempoTxt}\n`;
+            f += `AJUSTE: Cuatrimestral ICL\n`;
+            f += `VALOR MENSUAL: ${txtMensual}\n`;
+            f += `TOTAL CONTRATO X ${tiempoTxt}: ${txtTotalContrato}\n\n`;
             
-            f += `💰 GASTOS\n`;
-            f += `• Alquiler adelantado: ${txtAdelantado}\n`;
-            f += `• 50% Sellado DRG: ${txtSellado}\n`;
-            f += `• Depósito de garantía: ${txtDepositoFicha}\n`;
-            f += `• Honorarios inmobiliarios: ${txtHonorarios}\n`;
-            f += `• Escribanía cada parte\n\n`;
+            f += `GASTOS\n`;
+            f += `Alquiler adelantado: ${txtAdelantado}\n`;
+            f += `50% Sellado DRG: ${txtSellado}\n`;
+            f += `Depósito de garantía: ${txtDepositoFicha}\n`;
+            f += `Honorarios inmobiliarios: ${txtHonorarios}\n`;
+            f += `Escribanía cada parte\n\n`;
             
-            f += `🧮 TOTAL A PAGAR: ${txtTotalAPagar}\n\n`;
+            f += `TOTAL A PAGAR: ${txtTotalAPagar}\n\n`;
             
-            f += `📋 REQUISITOS\n\n`;
-            f += `👤 Inquilino con recibo de sueldo, monotributista o IVA Responsable Inscripto.\n`;
-            f += `👥 Garante con recibo de sueldo, monotributista o IVA Responsable Inscripto.\n`;
-            f += `🛡️ En caso de no poseer garantes, contratar un seguro de caución.\n`;
-            f += `🔥 Seguro contra incendio
+            f += `REQUISITOS\n\n`;
+            f += `Inquilino con recibo de sueldo, monotributista o IVA Responsable Inscripto.\n`;
+     
