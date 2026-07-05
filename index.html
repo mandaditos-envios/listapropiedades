@@ -54,7 +54,7 @@
         .panel-salida { margin-top: 35px; }
         .resultado-box { background: #0f172a; color: #f8fafc; padding: 25px; border-radius: 12px; font-family: 'Courier New', Courier, monospace; font-size: 13px; white-space: pre-wrap; line-height: 1.6; border: 1px solid #334155; max-height: 400px; overflow-y: auto; text-align: left; }
         
-        /* Panel Especial de Vista de Lectura Limpia (Fondo Claro) */
+        /* Vista de lectura limpia */
         .vista-lectura-box { background: #ffffff; color: #1e293b; padding: 30px; border-radius: 12px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; white-space: pre-wrap; line-height: 1.7; border: 2px dashed #cbd5e1; max-height: 400px; overflow-y: auto; text-align: left; margin-top: 15px; box-shadow: inset 0 2px 8px rgba(0,0,0,0.02); }
 
         .panel-guardar-final { background: #f8fafc; border: 1px solid var(--border); padding: 20px; border-radius: 12px; margin-top: 25px; display: flex; gap: 10px; align-items: flex-end; }
@@ -68,11 +68,13 @@
         <p>Generador y Registro de Fichas Técnicas</p>
     </div>
 
+    <!-- 📂 SECCIÓN DE PROPIEDADES GUARDADAS -->
     <div class="panel-guardados-fijo">
         <h3>📂 Ver Propiedades Guardadas</h3>
         <div class="grid-items-guardados" id="contenedorItemsGuardados"></div>
     </div>
 
+    <!-- FORMULARIO DE INGRESO -->
     <h2>📌 Datos Iniciales del Inmueble</h2>
     <div class="grid-3">
         <div class="campo">
@@ -203,17 +205,20 @@
         </div>
     </div>
 
+    <!-- 👓 VISTA SOLO DE LECTURA (FONDO BLANCO) -->
     <div class="panel-salida" style="margin-top: 40px;">
         <h2>👓 Vista Solo para Lectura</h2>
         <div class="vista-lectura-box" id="resultadoLectura">Completá los parámetros para leer...</div>
     </div>
 
+    <!-- 📋 PANEL DE COPIADO (FONDO OSCURO) -->
     <div class="panel-salida" style="margin-top: 30px;">
         <h2>📋 Cuadro para Copiar Texto</h2>
         <div class="resultado-box" id="resultadoTexto">Completá los parámetros requeridos...</div>
         <button class="btn btn-success" onclick="copiarTextoFicha()">📋 Copiar Texto de la Ficha Completa</button>
     </div>
 
+    <!-- GUARDADO -->
     <div class="panel-guardar-final">
         <div style="flex: 1;">
             <label for="id_propiedad" style="color: var(--primary); font-weight: 700;">💾 Registrar y Guardar Ficha:</label>
@@ -247,7 +252,9 @@
     }
 
     function calcularPreciosYFicha() {
-        const operacion = document.querySelector('input[name="operacion"]:checked').value;
+        const operacionNode = document.querySelector('input[name="operacion"]:checked');
+        const operacion = operacionNode ? operacionNode.value : 'Alquiler';
+        
         const dorms = document.getElementById('dormitorios').value;
         
         let tituloConstruido = `Departamento de ${dorms} en ${operacion.toLowerCase()}`;
@@ -256,10 +263,6 @@
         const mensual = parseFloat(document.getElementById('valor_mensual').value) || 0;
         const tiempoTxt = document.getElementById('tiempo_contrato').value || '24 meses';
         
-        if (mensual > 0 && !document.getElementById('g_adelantado').value) {
-            document.getElementById('g_adelantado').value = mensual;
-        }
-
         let mesesNumero = parseInt(tiempoTxt.replace(/\D/g, '')) || 24;
         let totalContratoCalculado = mensual * mesesNumero;
 
@@ -273,7 +276,9 @@
         const edif = document.getElementById('nombre_edificio').value.trim();
         const edifString = edif ? ` Edificio ${edif}` : '';
 
-        const expensasChoice = document.querySelector('input[name="tiene_expensas"]:checked').value;
+        const expensasChoiceNode = document.querySelector('input[name="tiene_expensas"]:checked');
+        const expensasChoice = expensasChoiceNode ? expensasChoiceNode.value : 'No';
+        
         let expensasLineaTxt = 'No';
         if (expensasChoice === 'Sí') {
             const expMonto = parseFloat(document.getElementById('monto_expensas').value) || 0;
@@ -282,12 +287,12 @@
 
         const descExtras = document.getElementById('detalle_ambientes').value.trim() || 'Ninguna';
 
-        const cochera = document.querySelector('input[name="cochera"]:checked').value;
-        const mascotas = document.querySelector('input[name="mascotas"]:checked').value;
-        const balcon = document.querySelector('input[name="balcon"]:checked').value;
-        const gimnasio = document.querySelector('input[name="gimnasio"]:checked').value;
-        const pileta = document.querySelector('input[name="pileta"]:checked').value;
-        const sum = document.querySelector('input[name="sum"]:checked').value;
+        const cochera = document.querySelector('input[name="cochera"]:checked')?.value || 'No';
+        const mascotas = document.querySelector('input[name="mascotas"]:checked')?.value || 'No';
+        const balcon = document.querySelector('input[name="balcon"]:checked')?.value || 'No';
+        const gimnasio = document.querySelector('input[name="gimnasio"]:checked')?.value || 'No';
+        const pileta = document.querySelector('input[name="pileta"]:checked')?.value || 'No';
+        const sum = document.querySelector('input[name="sum"]:checked')?.value || 'No';
 
         const txtMensual = mensual > 0 ? "$" + mensual.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$0,00';
         const txtTotalContrato = totalContratoCalculado > 0 ? "$" + totalContratoCalculado.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$0,00';
@@ -295,7 +300,7 @@
         const txtAdelantado = adelantado > 0 ? "$" + adelantado.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$0,00';
         const txtSellado = sellado > 0 ? "$" + sellado.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$0,00';
         
-        const depositoChoice = document.querySelector('input[name="deposito_tipo"]:checked').value;
+        const depositoChoice = document.querySelector('input[name="deposito_tipo"]:checked')?.value || 'Pagaré';
         let txtDepositoFicha = '📝 Pagaré';
         if (depositoChoice === 'Monto en Efectivo') {
             txtDepositoFicha = deposito > 0 ? "💵 Efectivo $" + deposito.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '💵 Efectivo $0,00';
@@ -304,7 +309,6 @@
         const txtHonorarios = honorarios > 0 ? "$" + honorarios.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$0,00';
         const txtTotalAPagar = totalIngreso > 0 ? "$" + totalIngreso.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$0,00';
 
-        // Estructura limpia y con íconos organizados
         let f = `🏢 CORTES PROPIEDADES\n`;
         f += `📍 Corrientes 2581\n`;
         f += `💼 Romina S. Cortes Matrícula CCPIM - N° 180\n`;
@@ -350,4 +354,137 @@
         f += `🔑 GARANTES\n\n`;
         f += `🔹 Fotocopia DNI frente y dorso.\n`;
         f += `🔹 Constancia de CUIL o CUIT.\n`;
-        f += `🔹 Fo
+        f += `🔹 Fotocopia de los últimos 3 recibos de sueldo o últimos 3 meses de monotributo / IVA Responsable Inscripto DDJJ.\n`;
+        f += `🔹 Mail y teléfono celular.\n\n`;
+        
+        f += `⚠️ CONDICIONES\n\n`;
+        f += `📌 Las reservas/señas se realizan con el 50% del valor del alquiler.\n`;
+        f += `📌 Se otorgan 5 días hábiles para presentar la documentación necesaria.\n`;
+        f += `📌 En caso de presentar algún requisito y haya sido rechazado, se otorgan 2 días más para volver a presentar.\n`;
+        f += `📌 Si no se presentan en tiempo y forma dichos requisitos, el monto de reserva/seña queda sin efecto a favor de la inmobiliaria.\n`;
+        f += `📌 Sin derecho a ser devueltos.`;
+
+        document.getElementById('resultadoTexto').innerText = f;
+        document.getElementById('resultadoLectura').innerText = f;
+    }
+
+    function copiarTextoFicha() {
+        const txt = document.getElementById('resultadoTexto').innerText;
+        navigator.clipboard.writeText(txt).then(() => {
+            alert("✅ Ficha técnica copiada con éxito.");
+        });
+    }
+
+    function guardarPropiedadLocal() {
+        const id = document.getElementById('id_propiedad').value.trim();
+        if (!id) {
+            alert("Escribí un nombre para identificar y guardar esta ficha.");
+            return;
+        }
+
+        const dataPack = {
+            nombre_edificio: document.getElementById('nombre_edificio').value,
+            operacion: document.querySelector('input[name="operacion"]:checked').value,
+            dormitorios: document.getElementById('dormitorios').value,
+            valor_mensual: document.getElementById('valor_mensual').value,
+            tiene_expensas: document.querySelector('input[name="tiene_expensas"]:checked').value,
+            monto_expensas: document.getElementById('monto_expensas').value,
+            detalle_ambientes: document.getElementById('detalle_ambientes').value,
+            cochera: document.querySelector('input[name="cochera"]:checked').value,
+            mascotas: document.querySelector('input[name="mascotas"]:checked').value,
+            balcon: document.querySelector('input[name="balcon"]:checked').value,
+            gimnasio: document.querySelector('input[name="gimnasio"]:checked').value,
+            pileta: document.querySelector('input[name="pileta"]:checked').value,
+            sum: document.querySelector('input[name="sum"]:checked').value,
+            tiempo_contrato: document.getElementById('tiempo_contrato').value,
+            g_adelantado: document.getElementById('g_adelantado').value,
+            g_sellado: document.getElementById('g_sellado').value,
+            deposito_tipo: document.querySelector('input[name="deposito_tipo"]:checked').value,
+            g_deposito: document.getElementById('g_deposito').value,
+            g_honorarios: document.getElementById('g_honorarios').value
+        };
+
+        localStorage.setItem('cortes_crm_final_' + id, JSON.stringify(dataPack));
+        alert(`💾 Ficha "${id}" guardada con éxito.`);
+        document.getElementById('id_propiedad').value = '';
+        renderizarListaGuardados();
+    }
+
+    function cargarFichaGuardada(idClave) {
+        const raw = localStorage.getItem(idClave);
+        if (!raw) return;
+        const d = JSON.parse(raw);
+
+        document.getElementById('id_propiedad').value = idClave.replace('cortes_crm_final_', '');
+        document.getElementById('nombre_edificio').value = d.nombre_edificio || '';
+        
+        document.querySelector(`input[name="operacion"][value="${d.operacion || 'Alquiler'}"]`).checked = true;
+        document.getElementById('dormitorios').value = d.dormitorios || '1 dormitorio';
+        document.getElementById('valor_mensual').value = d.valor_mensual || '';
+        
+        document.querySelector(`input[name="tiene_expensas"][value="${d.tiene_expensas || 'No'}"]`).checked = true;
+        alternarExpensasMonto(d.tiene_expensas || 'No');
+        document.getElementById('monto_expensas').value = d.monto_expensas || '';
+        
+        document.getElementById('detalle_ambientes').value = d.detalle_ambientes || '';
+        
+        document.querySelector(`input[name="cochera"][value="${d.cochera || 'No'}"]`).checked = true;
+        document.querySelector(`input[name="mascotas"][value="${d.mascotas || 'No'}"]`).checked = true;
+        document.querySelector(`input[name="balcon"][value="${d.balcon || 'No'}"]`).checked = true;
+        document.querySelector(`input[name="gimnasio"][value="${d.gimnasio || 'No'}"]`).checked = true;
+        document.querySelector(`input[name="pileta"][value="${d.pileta || 'No'}"]`).checked = true;
+        document.querySelector(`input[name="sum"][value="${d.sum || 'No'}"]`).checked = true;
+        
+        document.getElementById('tiempo_contrato').value = d.tiempo_contrato || '24 meses';
+        document.getElementById('g_adelantado').value = d.g_adelantado || '';
+        document.getElementById('g_sellado').value = d.g_sellado || '';
+        
+        document.querySelector(`input[name="deposito_tipo"][value="${d.deposito_tipo || 'Pagaré'}"]`).checked = true;
+        alternarDepositoMonto(d.deposito_tipo || 'Pagaré');
+        document.getElementById('g_deposito').value = d.g_deposito || '';
+        document.getElementById('g_honorarios').value = d.g_honorarios || '';
+
+        calcularPreciosYFicha();
+    }
+
+    function eliminarFichaGuardada(e, idClave) {
+        e.stopPropagation();
+        if(confirm("¿Eliminar este registro guardado?")) {
+            localStorage.removeItem(idClave);
+            renderizarListaGuardados();
+            calcularPreciosYFicha();
+        }
+    }
+
+    function renderizarListaGuardados() {
+        const contenedor = document.getElementById('contenedorItemsGuardados');
+        contenedor.innerHTML = '';
+        let contador = 0;
+
+        for (let i = 0; i < localStorage.length; i++) {
+            const clave = localStorage.key(i);
+            if (clave.startsWith('cortes_crm_final_')) {
+                contador++;
+                const nombreLindo = clave.replace('cortes_crm_final_', '');
+                
+                const item = document.createElement('div');
+                item.className = 'item-guardado';
+                item.setAttribute('onclick', `cargarFichaGuardada('${clave}')`);
+                item.innerHTML = `🏢 ${nombreLindo} <button class="btn-borrar-item" onclick="eliminarFichaGuardada(event, '${clave}')">×</button>`;
+                
+                contenedor.appendChild(item);
+            }
+        }
+
+        if (contador === 0) {
+            contenedor.innerHTML = '<span style="font-size:13px; color:#94a3b8; font-weight:500;">No hay fichas guardadas actualmente en este navegador.</span>';
+        }
+    }
+
+    // Inicialización del sistema
+    renderizarListaGuardados();
+    calcularPreciosYFicha();
+</script>
+
+</body>
+</html>
