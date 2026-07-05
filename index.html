@@ -3,169 +3,300 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador de Fichas Inmobiliarias</title>
+    <title>Generador de Fichas - Cortes Propiedades</title>
     <style>
         :root {
-            --primary: #0f172a;
+            --primary: #1e293b;
             --accent: #25d366;
-            --bg: #f8fafc;
+            --bg: #f1f5f9;
             --border: #cbd5e1;
         }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: #334155; margin: 0; padding: 20px; }
-        .contenedor { max-width: 700px; margin: 0 auto; background: white; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05); }
-        h1 { font-size: 24px; color: var(--primary); margin-top: 0; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
-        h2 { font-size: 18px; color: var(--primary); margin-bottom: 10px; }
-        .campo { margin-bottom: 20px; }
-        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; color: var(--primary); }
-        input[type="text"], input[type="number"], textarea, select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 15px; box-sizing: border-box; font-family: inherit; }
-        textarea { height: 100px; resize: vertical; }
-        .opciones-inline { display: flex; gap: 20px; margin-top: 5px; }
-        .opciones-inline label { font-weight: normal; display: flex; align-items: center; gap: 6px; cursor: pointer; }
+        .contenedor { max-width: 750px; margin: 0 auto; background: white; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        h1 { font-size: 26px; color: var(--primary); margin-top: 0; text-align: center; border-bottom: 3px solid var(--primary); padding-bottom: 10px; }
+        h2 { font-size: 18px; color: var(--primary); margin: 25px 0 10px 0; border-left: 4px solid var(--primary); padding-left: 8px; }
+        .campo { margin-bottom: 15px; }
+        .sub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 14px; color: var(--primary); }
+        input[type="text"], input[type="number"], textarea, select { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; box-sizing: border-box; font-family: inherit; }
+        .opciones-inline { display: flex; gap: 15px; margin-top: 5px; flex-wrap: wrap; }
+        .opciones-inline label { font-weight: normal; display: flex; align-items: center; gap: 6px; cursor: pointer; margin-bottom: 0; }
         
-        /* Contenedor del texto generado */
-        .resultado-box { background: #0f172a; color: #f8fafc; padding: 20px; border-radius: 12px; font-family: 'Courier New', Courier, monospace; font-size: 14px; white-space: pre-wrap; line-height: 1.5; margin-top: 15px; border: 1px solid #334155; }
-        
-        .btn { width: 100%; background: var(--primary); color: white; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 10px; }
-        .btn:hover { background: #1e293b; }
-        .btn-copiar { background: var(--accent); color: white; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .resultado-box { background: #0f172a; color: #f8fafc; padding: 25px; border-radius: 12px; font-family: 'Courier New', Courier, monospace; font-size: 14px; white-space: pre-wrap; line-height: 1.6; margin-top: 15px; border: 1px solid #334155; }
+        .btn-copiar { width: 100%; background: var(--accent); color: white; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.2s; margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-copiar:hover { background: #1ebd58; }
-        
-        .galeria-previa { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 10px; }
-        .galeria-previa img { width: 100%; height: 100px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); }
+        .alert-calc { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 10px; border-radius: 6px; color: #166534; font-size: 13px; font-weight: 600; margin-top: 5px; }
     </style>
 </head>
 <body>
 
 <div class="contenedor">
-    <h1>📝 Generador de Fichas para WhatsApp</h1>
+    <h1>FICHA DE PROPIEDAD</h1>
     
-    <!-- Formulario de Entrada -->
     <div class="campo">
-        <label for="nombre">Nombre interno de la propiedad (Para guardar borrador):</label>
-        <input type="text" id="nombre" placeholder="Ej: Casa Marva, Depto Palermo" oninput="actualizarTodo()">
+        <label for="titulo">Título de la propiedad:</label>
+        <input type="text" id="titulo" placeholder="Ej: Hermoso departamento céntrico" oninput="actualizarFicha()">
     </div>
 
-    <div class="campo">
-        <label>Tipo de operación:</label>
-        <div class="opciones-inline">
-            <label><input type="radio" name="tipo" value="Alquiler" checked onchange="actualizarTodo()"> 🔑 Alquiler</label>
-            <label><input type="radio" name="tipo" value="Venta" onchange="actualizarTodo()"> 💰 Venta</label>
+    <!-- 📊 CARACTERÍSTICAS (MÚLTIPLE CHOICE / TEXTO CORTO) -->
+    <h2>📊 Características del Inmueble</h2>
+    
+    <div class="sub-grid">
+        <div class="campo">
+            <label for="dormitorios">Dormitorios:</label>
+            <select id="dormitorios" onchange="actualizarFicha()">
+                <option value="Monoambiente">Monoambiente</option>
+                <option value="1 Dormitorio" selected>1 Dormitorio</option>
+                <option value="2 Dormitorios">2 Dormitorios</option>
+                <option value="3 Dormitorios">3 Dormitorios</option>
+            </select>
+        </div>
+        <div class="campo">
+            <label>Balcón:</label>
+            <div class="opciones-inline">
+                <label><input type="radio" name="balcon" value="Sí" checked onchange="actualizarFicha()"> Sí</label>
+                <label><input type="radio" name="balcon" value="No" onchange="actualizarFicha()"> No</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="sub-grid">
+        <div class="campo">
+            <label>Cochera:</label>
+            <div class="opciones-inline">
+                <label><input type="radio" name="cochera" value="Sí" onchange="actualizarFicha()"> Sí</label>
+                <label><input type="radio" name="cochera" value="No" checked onchange="actualizarFicha()"> No</label>
+            </div>
+        </div>
+        <div class="campo">
+            <label>Aceptan mascotas:</label>
+            <div class="opciones-inline">
+                <label><input type="radio" name="mascotas" value="Sí" onchange="actualizarFicha()"> Sí</label>
+                <label><input type="radio" name="mascotas" value="No" checked onchange="actualizarFicha()"> No</label>
+                <label><input type="radio" name="mascotas" value="A consultar" onchange="actualizarFicha()"> A consultar</label>
+            </div>
         </div>
     </div>
 
     <div class="campo">
-        <label for="titulo">Título comercial para el cliente:</label>
-        <input type="text" id="titulo" placeholder="Ej: Hermosa Casa 3 Ambientes con Patio" oninput="actualizarTodo()">
+        <label for="expensas">Expensas mensuales:</label>
+        <input type="text" id="expensas" placeholder="Ej: $ 45.000 o No paga" value="No paga" oninput="actualizarFicha()">
     </div>
 
     <div class="campo">
-        <label for="precio">Precio:</label>
-        <input type="text" id="precio" placeholder="Ej: $ 500.000 / mes o U$S 85.000" oninput="actualizarTodo()">
+        <label>Amenities del edificio:</label>
+        <div class="opciones-inline">
+            <label><input type="checkbox" id="gimnasio" onchange="actualizarFicha()"> Gimnasio</label>
+            <label><input type="checkbox" id="pileta" onchange="actualizarFicha()"> Pileta</label>
+            <label><input type="checkbox" id="sum" onchange="actualizarFicha()"> SUM</label>
+        </div>
+    </div>
+
+    <!-- 📋 DETALLES DEL CONTRATO -->
+    <h2>📋 Detalles del Contrato</h2>
+    
+    <div class="campo">
+        <label for="depto_tipo">Departamento / Dirección exacta:</label>
+        <input type="text" id="depto_tipo" placeholder="Ej: Piso 3 - Depto B al Frente" oninput="actualizarFicha()">
     </div>
 
     <div class="campo">
-        <label for="ubicacion">Ubicación / Barrio:</label>
-        <input type="text" id="ubicacion" placeholder="Ej: Zona Centro, Posadas" oninput="actualizarTodo()">
+        <label for="detalle_ambientes">Detalle adicional de ambientes:</label>
+        <textarea id="detalle_ambientes" placeholder="Ej: Cocina separada, lavadero incorporado, baño completo..." oninput="actualizarFicha()"></textarea>
+    </div>
+
+    <div class="sub-grid">
+        <div class="campo">
+            <label for="tiempo_contrato">Tiempo de contrato:</label>
+            <input type="text" id="tiempo_contrato" value="24 Meses" oninput="actualizarFicha()">
+        </div>
+        <div class="campo">
+            <label for="valor_mensual">Valor mensual inicial (Solo números):</label>
+            <input type="number" id="valor_mensual" placeholder="Ej: 500000" oninput="calcularTodo()">
+        </div>
     </div>
 
     <div class="campo">
-        <label for="descripcion">Descripción de la propiedad:</label>
-        <textarea id="descripcion" placeholder="Contá acá los detalles: ambientes, cochera, luminosidad..." oninput="actualizarTodo()"></textarea>
+        <label for="total_contrato">Total contrato por 24 meses:</label>
+        <input type="text" id="total_contrato" placeholder="Se calcula solo o podés escribir acá si varía" oninput="actualizarFicha()">
+        <div class="alert-calc">💡 Calculado automáticamente en base al valor inicial. Podés modificarlo si es necesario.</div>
+    </div>
+
+    <!-- 💰 GASTOS DE INGRESO -->
+    <h2>💰 Gastos de Ingreso (Ingresá solo números)</h2>
+    
+    <div class="sub-grid">
+        <div class="campo">
+            <label for="g_adelantado">Alquiler adelantado:</label>
+            <input type="number" id="g_adelantado" placeholder="Ej: 500000" oninput="calcularGastos()">
+        </div>
+        <div class="campo">
+            <label soul for="g_sellado">50% Sellado DRG:</label>
+            <input type="number" id="g_sellado" placeholder="Ej: 12000" oninput="calcularGastos()">
+        </div>
     </div>
 
     <div class="campo">
-        <label for="requisitos">Requisitos / Condiciones:</label>
-        <textarea id="requisitos" placeholder="Ej: - Mes de adelanto&#10;- Mes de depósito&#10;- Recibo de sueldo" oninput="actualizarTodo()"></textarea>
+        <label>Depósito de garantía:</label>
+        <div class="opciones-inline" style="margin-bottom: 10px;">
+            <label><input type="radio" name="deposito_tipo" value="Pagaré" checked onchange="alternarDeposito(this.value)"> Pagaré</label>
+            <label><input type="radio" name="deposito_tipo" value="Valor" onchange="alternarDeposito(this.value)"> Valor en efectivo</label>
+        </div>
+        <input type="number" id="g_deposito" placeholder="Ingresá el valor del depósito" style="display:none;" oninput="calcularGastos()">
     </div>
 
     <div class="campo">
-        <label for="fotos">Seleccionar fotos (se incluirán como links de referencia abajo):</label>
-        <input type="file" id="fotos" multiple accept="image/*" onchange="procesarFotos()">
-        <div class="galeria-previa" id="galeriaPrevia"></div>
+        <label for="g_honorarios">Honorarios inmobiliarios:</label>
+        <input type="number" id="g_honorarios" placeholder="Ej: 600000" oninput="calcularGastos()">
     </div>
 
     <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 30px 0;">
 
-    <!-- Sección de Salida (Transcripción) -->
-    <h2>📋 Vista Previa de la Ficha (Formato WhatsApp)</h2>
-    <div class="resultado-box" id="resultadoTexto">Completá los campos de arriba para generar la ficha...</div>
+    <!-- OUTPUT FORMATO WHATSAPP -->
+    <h2>📋 Vista Previa Lista para WhatsApp</h2>
+    <div class="resultado-box" id="resultadoTexto">Completá los campos para transcribir la ficha...</div>
     
-    <button class="btn btn-copiar" onclick="copiarTexto()">
-        📋 Copiar Ficha Lista para Enviar
+    <button class="btn-copiar" onclick="copiarFicha()">
+        📋 Copiar Ficha Profesional
     </button>
 </div>
 
 <script>
-    let nombresFotos = [];
+    let totalPagarAutomatico = 0;
 
-    // Esta función junta todos los datos y escribe el texto abajo
-    function actualizarTodo() {
-        const nombreProp = document.getElementById('nombre').value || 'Sin Nombre';
-        const tipoOp = document.querySelector('input[name="tipo"]:checked').value;
-        const titulo = document.getElementById('titulo').value || '[Sin título]';
-        const precio = document.getElementById('precio').value || '[Sin precio]';
-        const ubicacion = document.getElementById('ubicacion').value || '[Sin ubicación]';
-        const descripcion = document.getElementById('descripcion').value || '[Sin descripción]';
-        const requisitos = document.getElementById('requisitos').value || '[Sin requisitos]';
-
-        // Estructura limpia y vendedora con emojis para WhatsApp
-        let textoFinal = `🏠 *NUEVA PROPIEDAD DISPONIBLE* 🏠\n`;
-        textoFinal += `✨ *${titulo}* (${tipoOp})\n\n`;
-        textoFinal += `💵 *Precio:* ${precio}\n`;
-        textoFinal += `📍 *Ubicación:* ${ubicacion}\n\n`;
-        textoFinal += `📝 *Descripción:* \n${descripcion}\n\n`;
-        textoFinal += `📋 *Requisitos / Condiciones:* \n${requisitos}\n`;
-
-        // Si subiste fotos, agrega los nombres de los archivos para que el cliente sepa cuáles son
-        if (nombresFotos.length > 0) {
-            textoFinal += `\n📸 *Fotos adjuntas:* ${nombresFotos.join(', ')}\n`;
+    function alternarDeposito(tipo) {
+        const inputDep = document.getElementById('g_deposito');
+        if (tipo === 'Valor') {
+            inputDep.style.display = 'block';
+        } else {
+            inputDep.style.display = 'none';
+            inputDep.value = '';
         }
+        calcularGastos();
+    }
+
+    function calcularTodo() {
+        const valorMensual = parseFloat(document.getElementById('valor_mensual').value) || 0;
+        if(valorMensual > 0) {
+            document.getElementById('total_contrato').value = "$ " + (valorMensual * 24).toLocaleString('es-AR');
+            document.getElementById('g_adelantado').value = valorMensual;
+        }
+        calcularGastos();
+    }
+
+    function calcularGastos() {
+        const adelantado = parseFloat(document.getElementById('g_adelantado').value) || 0;
+        const sellado = parseFloat(document.getElementById('g_sellado').value) || 0;
+        const honorarios = parseFloat(document.getElementById('g_honorarios').value) || 0;
         
-        textoFinal += `\n📲 _¿Te interesa? ¡Consultame para coordinar una visita!_`;
+        const tipoDep = document.querySelector('input[name="deposito_tipo"]:checked').value;
+        const depositoVal = parseFloat(document.getElementById('g_deposito').value) || 0;
 
-        document.getElementById('resultadoTexto').innerText = textoFinal;
-
-        // Guardar borrador automático en el navegador usando el nombre de la propiedad
-        const datosBorrador = { tipoOp, titulo, precio, ubicacion, descripcion, requisitos };
-        localStorage.setItem('borrador_' + nombreProp, JSON.stringify(datosBorrador));
-    }
-
-    // Procesa las fotos que subís solo para mostrar la miniatura abajo y sacar el nombre
-    function procesarFotos() {
-        const input = document.getElementById('fotos');
-        const galeria = document.getElementById('galeriaPrevia');
-        galeria.innerHTML = '';
-        nombresFotos = [];
-
-        if (input.files) {
-            Array.from(input.files).forEach(file => {
-                nombresFotos.push(file.name);
-                
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    galeria.appendChild(img);
-                }
-                reader.readAsDataURL(file);
-            });
+        // Suma total a pagar (Si es pagaré no suma al desembolso en efectivo inicial)
+        totalPagarAutomatico = adelantado + sellado + honorarios;
+        if(tipoDep === 'Valor') {
+            totalPagarAutomatico += depositoVal;
         }
-        actualizarTodo();
+
+        actualizarFicha();
     }
 
-    // Función del botón que copia el texto al portapapeles automáticamente
-    function copiarTexto() {
+    function actualizarFicha() {
+        const titulo = document.getElementById('titulo').value || '[Sin Título]';
+        const dormitorios = document.getElementById('dormitorios').value;
+        const balcon = document.querySelector('input[name="balcon"]:checked').value;
+        const cochera = document.querySelector('input[name="cochera"]:checked').value;
+        const mascotas = document.querySelector('input[name="mascotas"]:checked').value;
+        const expensas = document.getElementById('expensas').value || 'No paga';
+        
+        let amenities = [];
+        if(document.getElementById('gimnasio').checked) amenities.push('Gimnasio');
+        if(document.getElementById('pileta').checked) amenities.push('Pileta');
+        if(document.getElementById('sum').checked) amenities.push('SUM');
+        const amenitiesTxt = amenities.length > 0 ? amenities.join(', ') : 'No posee';
+
+        const deptoTipo = document.getElementById('depto_tipo').value || '(completar)';
+        const detalleAmbientes = document.getElementById('detalle_ambientes').value || '(completar)';
+        const tiempoContrato = document.getElementById('tiempo_contrato').value || '24 Meses';
+        const valorMensualInput = parseFloat(document.getElementById('valor_mensual').value) || 0;
+        const valorMensualTxt = valorMensualInput > 0 ? "$ " + valorMensualInput.toLocaleString('es-AR') : '(completar)';
+        const totalContrato = document.getElementById('total_contrato').value || '(completar)';
+
+        const adelantadoInput = parseFloat(document.getElementById('g_adelantado').value) || 0;
+        const adelantadoTxt = adelantadoInput > 0 ? "$ " + adelantadoInput.toLocaleString('es-AR') : '(completar)';
+        
+        const selladoInput = parseFloat(document.getElementById('g_sellado').value) || 0;
+        const selladoTxt = selladoInput > 0 ? "$ " + selladoInput.toLocaleString('es-AR') : '(completar)';
+
+        const tipoDep = document.querySelector('input[name="deposito_tipo"]:checked').value;
+        let depositoTxt = "Pagaré";
+        if(tipoDep === 'Valor') {
+            const depVal = parseFloat(document.getElementById('g_deposito').value) || 0;
+            depositoTxt = depVal > 0 ? "$ " + depVal.toLocaleString('es-AR') : '(completar)';
+        }
+
+        const honorariosInput = parseFloat(document.getElementById('g_honorarios').value) || 0;
+        const honorariosTxt = honorariosInput > 0 ? "$ " + honorariosInput.toLocaleString('es-AR') : '(completar)';
+
+        const totalPagarTxt = totalPagarAutomatico > 0 ? "$ " + totalPagarAutomatico.toLocaleString('es-AR') : '(completar)';
+
+        // Armado del texto formal estructurado
+        let f = `🏠 *FICHA DE PROPIEDAD* 🏠\n`;
+        f += `✨ *${titulo}*\n\n`;
+        f += `📊 *CARACTERÍSTICAS:*\n`;
+        f += `• Dormitorios: ${dormitorios}\n`;
+        f += `• Balcón: ${balcon}\n`;
+        f += `• Cochera: ${cochera}\n`;
+        f += `• Aceptan mascotas: ${mascotas}\n`;
+        f += `• Expensas: ${expensas}\n`;
+        f += `• Amenities Edificio: ${amenitiesTxt}\n\n`;
+        f += `------------------------------------------\n\n`;
+        f += `💼 *CORTES PROPIEDADES*\n`;
+        f += `📍 Corrientes 2581\n`;
+        f += `📜 Romina S. Cortes Matrícula CCPIM - N° 180\n`;
+        f += `⚖️ Martillera pública y corredora de comercio\n\n`;
+        f += `🏢 *Departamento:* ${deptoTipo}\n\n`;
+        f += `🔍 *DETALLE:* ${detalleAmbientes}\n`;
+        f += `📅 *TIEMPO DE CONTRATO:* ${tiempoContrato}\n`;
+        f += `📈 *AJUSTE:* Cuatrimestral ICL\n`;
+        f += `💵 *VALOR MENSUAL:* ${valorMensualTxt}\n`;
+        f += `💰 *TOTAL CONTRATO X 24 MESES:* ${totalContrato}\n\n`;
+        f += `💸 *GASTOS DE INGRESO:*\n`;
+        f += `• Alquiler adelantado: ${adelantadoTxt}\n`;
+        f += `• 50% Sellado DRG: ${selladoTxt}\n`;
+        f += `• Depósito de garantía: ${depositoTxt}\n`;
+        f += `• Honorarios inmobiliarios: ${honorariosTxt}\n`;
+        f += `• Escribanía cada parte\n\n`;
+        f += `🔥 *TOTAL A PAGAR INICIAL:* ${totalPagarTxt}\n\n`;
+        f += `------------------------------------------\n\n`;
+        f += `📋 *REQUISITOS GENERALES:*\n`;
+        f += `- Inquilino con recibo de sueldo, monotributista o IVA Responsable Inscripto.\n`;
+        f += `- Garante con recibo de sueldo, monotributista o IVA Responsable Inscripto.\n`;
+        f += `- En caso de no poseer garantes, contratar un seguro de caución.\n`;
+        f += `- Seguro contra incendios.\n\n`;
+        f += `👤 *DOCUMENTACIÓN INQUILINO:*\n`;
+        f += `1. Fotocopia DNI frente y dorso.\n`;
+        f += `2. Constancia de CUIL o CUIT.\n`;
+        f += `3. Fotocopia de los últimos 3 recibos de sueldo o últimos 3 meses de monotributo / IVA Responsable Inscripto DDJJ.\n`;
+        f += `4. Mail y teléfono celular.\n\n`;
+        f += `👥 *DOCUMENTACIÓN GARANTES:*\n`;
+        f += `1. Fotocopia DNI frente y dorso.\n`;
+        f += `2. Constancia de CUIL o CUIT.\n`;
+        f += `3. Fotocopia de los últimos 3 recibos de sueldo o últimos 3 meses de monotributo / IVA Responsable Inscripto DDJJ.\n`;
+        f += `4. Mail y teléfono celular.\n\n`;
+        f += `⚠️ *CONDICIONES DE RESERVA:*\n`;
+        f += `• Las reservas/señas se realizan con el 50% del valor del alquiler.\n`;
+        f += `• Se otorgan 5 días hábiles para presentar la documentación necesaria.\n`;
+        f += `• En caso de presentar algún requisito y haya sido rechazado, se otorgan 2 días más para volver a presentar.\n`;
+        f += `• Si no se presentan en tiempo y forma dichos requisitos, el monto de reserva/seña queda sin efecto a favor de la inmobiliaria, sin derecho a ser devueltos.`;
+
+        document.getElementById('resultadoTexto').innerText = f;
+    }
+
+    function copiarFicha() {
         const texto = document.getElementById('resultadoTexto').innerText;
-        
-        if(texto.includes("Completá los campos")) {
-            alert("Primero escribe algo de información.");
-            return;
-        }
-
         navigator.clipboard.writeText(texto).then(() => {
-            alert("¡Ficha copiada con éxito! Ya podés ir a WhatsApp y pegarla.");
-        }).catch(err => {
-            alert("Hubo un error al copiar el texto automáticamente. Seleccionalo manualmente.");
+            alert("¡Ficha institucional de Cortes Propiedades copiada al portapapeles!");
         });
     }
 </script>
