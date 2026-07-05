@@ -300,7 +300,6 @@
         const honorarios = parseFloat(document.getElementById('g_honorarios').value) || 0;
         const deposito = parseFloat(document.getElementById('g_deposito').value) || 0;
 
-        // La matemática inteligente: si es pagaré, depósito vale 0 y no altera la suma
         totalGlobal = adelantado + sellado + honorarios + deposito;
         actualizarTodo();
     }
@@ -357,4 +356,4 @@
 
         let f = `🏠 *FICHA DE PROPIEDAD*\n✨ *${d.t}*\n\n`;
         f += `📊 *CARACTERÍSTICAS:*\n• Tipo de Inmueble: ${d.tInm} (${d.op})\n• Dormitorios: ${d.dorm}\n• Baños: ${d.banos}\n• Ambientes: ${d.amb}\n• Cochera: ${d.coch}\n• Aceptan mascotas: ${d.masc}\n• Expensas: ${d.exp}\n• Amenities: ${d.amTxt}\n\n`;
-        f += `💼 *CORTES PROPIE
+        f += `💼 *CORTES PROPIEDADES*\n📍 Corrientes 2581\n📜 Romina S. Cortes Matrícula CCPIM - N° 180\n⚖️ Martillera 
