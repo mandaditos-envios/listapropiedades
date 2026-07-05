@@ -22,7 +22,6 @@
         .header-sistema h1 { font-size: 26px; font-weight: 800; color: var(--primary); margin: 0 0 5px 0; letter-spacing: -0.5px; }
         .header-sistema p { font-size: 13px; color: #64748b; margin: 0; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
 
-        /* Panel Fijo de Propiedades Guardadas Arriba de Todo */
         .panel-guardados-fijo { background: #f1f5f9; border: 1px solid var(--border); padding: 20px; border-radius: 12px; margin-bottom: 30px; }
         .panel-guardados-fijo h3 { margin: 0 0 12px 0; font-size: 14px; text-transform: uppercase; color: var(--primary); display: flex; align-items: center; gap: 6px; }
         .grid-items-guardados { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -45,7 +44,6 @@
 
         .opciones-grupo { display: flex; gap: 8px; flex-wrap: wrap; }
         .opciones-grupo label { font-weight: 500; font-size: 13px; background: #fff; border: 1px solid var(--border); padding: 8px 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; margin: 0; user-select: none; }
-        .opciones-grupo input[type="radio"] { margin: 0; }
         
         .btn { padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
         .btn-primary { background: var(--primary); color: white; }
@@ -54,8 +52,11 @@
         .btn-success:hover { background: #059669; }
         
         .panel-salida { margin-top: 35px; }
-        .resultado-box { background: #0f172a; color: #f8fafc; padding: 25px; border-radius: 12px; font-family: 'Courier New', Courier, monospace; font-size: 13px; white-space: pre-wrap; line-height: 1.6; border: 1px solid #334155; max-height: 500px; overflow-y: auto; text-align: left; }
+        .resultado-box { background: #0f172a; color: #f8fafc; padding: 25px; border-radius: 12px; font-family: 'Courier New', Courier, monospace; font-size: 13px; white-space: pre-wrap; line-height: 1.6; border: 1px solid #334155; max-height: 400px; overflow-y: auto; text-align: left; }
         
+        /* Panel Especial de Vista de Lectura Limpia (Fondo Claro) */
+        .vista-lectura-box { background: #ffffff; color: #1e293b; padding: 30px; border-radius: 12px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; white-space: pre-wrap; line-height: 1.7; border: 2px dashed #cbd5e1; max-height: 400px; overflow-y: auto; text-align: left; margin-top: 15px; box-shadow: inset 0 2px 8px rgba(0,0,0,0.02); }
+
         .panel-guardar-final { background: #f8fafc; border: 1px solid var(--border); padding: 20px; border-radius: 12px; margin-top: 25px; display: flex; gap: 10px; align-items: flex-end; }
     </style>
 </head>
@@ -202,10 +203,15 @@
         </div>
     </div>
 
-    <div class="panel-salida">
-        <h2>📋 Vista Previa de la Ficha Técnica</h2>
+    <div class="panel-salida" style="margin-top: 40px;">
+        <h2>👓 Vista Solo para Lectura</h2>
+        <div class="vista-lectura-box" id="resultadoLectura">Completá los parámetros para leer...</div>
+    </div>
+
+    <div class="panel-salida" style="margin-top: 30px;">
+        <h2>📋 Cuadro para Copiar Texto</h2>
         <div class="resultado-box" id="resultadoTexto">Completá los parámetros requeridos...</div>
-        <button class="btn btn-success" onclick="copiarTextoFicha()">📋 Copiar Texto de la Ficha</button>
+        <button class="btn btn-success" onclick="copiarTextoFicha()">📋 Copiar Texto de la Ficha Completa</button>
     </div>
 
     <div class="panel-guardar-final">
@@ -241,34 +247,29 @@
     }
 
     function calcularPreciosYFicha() {
-        // 1. Título Autogenerado
         const operacion = document.querySelector('input[name="operacion"]:checked').value;
         const dorms = document.getElementById('dormitorios').value;
         
         let tituloConstruido = `Departamento de ${dorms} en ${operacion.toLowerCase()}`;
         document.getElementById('titulo_automatico').value = tituloConstruido;
 
-        // 2. Extraer valores financieros
         const mensual = parseFloat(document.getElementById('valor_mensual').value) || 0;
         const tiempoTxt = document.getElementById('tiempo_contrato').value || '24 meses';
         
-        // Autocompletar el alquiler adelantado sugerido si está vacío
         if (mensual > 0 && !document.getElementById('g_adelantado').value) {
             document.getElementById('g_adelantado').value = mensual;
         }
 
-        // Detectar número de meses para multiplicar de forma automatizada
         let mesesNumero = parseInt(tiempoTxt.replace(/\D/g, '')) || 24;
         let totalContratoCalculado = mensual * mesesNumero;
 
         const adelantado = parseFloat(document.getElementById('g_adelantado').value) || 0;
         const sellado = parseFloat(document.getElementById('g_sellado').value) || 0;
         const honorarios = parseFloat(document.getElementById('g_honorarios').value) || 0;
-        const deposito = parseFloat(document.getElementById('g_deposito').value) || 0; // Solo tendrá valor si está en Efectivo
+        const deposito = parseFloat(document.getElementById('g_deposito').value) || 0;
 
         let totalIngreso = adelantado + sellado + honorarios + deposito;
 
-        // 3. Formatear datos para el cuerpo del mensaje
         const edif = document.getElementById('nombre_edificio').value.trim();
         const edifString = edif ? ` Edificio ${edif}` : '';
 
@@ -295,191 +296,58 @@
         const txtSellado = sellado > 0 ? "$" + sellado.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$0,00';
         
         const depositoChoice = document.querySelector('input[name="deposito_tipo"]:checked').value;
-        let txtDepositoFicha = 'Pagaré';
+        let txtDepositoFicha = '📝 Pagaré';
         if (depositoChoice === 'Monto en Efectivo') {
-            txtDepositoFicha = depósito > 0 ? "Efectivo $" + deposito.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : 'Efectivo $0,00';
+            txtDepositoFicha = deposito > 0 ? "💵 Efectivo $" + deposito.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '💵 Efectivo $0,00';
         }
 
         const txtHonorarios = honorarios > 0 ? "$" + honorarios.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$0,00';
         const txtTotalAPagar = totalIngreso > 0 ? "$" + totalIngreso.toLocaleString('es-AR', { minimumFractionDigits: 2 }) : '$0,00';
 
-        // 4. Construcción Estricta del Formato Solicitado
-        let f = `CORTES PROPIEDADES\n`;
-        f += `Corrientes 2581\n`;
-        f += `Romina S. Cortes Matrícula CCPIM - N° 180\n`;
-        f += `Martillera pública y corredora de comercio\n\n`;
+        // Estructura limpia y con íconos organizados
+        let f = `🏢 CORTES PROPIEDADES\n`;
+        f += `📍 Corrientes 2581\n`;
+        f += `💼 Romina S. Cortes Matrícula CCPIM - N° 180\n`;
+        f += `📜 Martillera pública y corredora de comercio\n\n`;
         
-        f += `DETALLE: ${tituloConstruido}${edifString}\n`;
-        f += `Expensas: ${expensasLineaTxt}\n`;
-        f += `Descripción extras: ${descExtras}\n\n`;
+        f += `🔍 DETALLE: ${tituloConstruido}${edifString}\n`;
+        f += `💵 Expensas: ${expensasLineaTxt}\n`;
+        f += `📝 Descripción extras: ${descExtras}\n\n`;
         
-        f += `• Cochera: ${cochera}\n`;
-        f += `• Aceptan mascotas: ${mascotas}\n`;
-        f += `• Balcón: ${balcon}\n`;
-        f += `• Gimnasio: ${gimnasio}\n`;
-        f += `• Pileta: ${pileta}\n`;
-        f += `• SUM: ${sum}\n\n`;
+        f += `🚗 Cochera: ${cochera === 'Sí' ? '✅ Sí' : '❌ No'}\n`;
+        f += `🐾 Aceptan mascotas: ${mascotas === 'Sí' ? '✅ Sí' : '❌ No'}\n`;
+        f += `🌅 Balcón: ${balcon === 'Sí' ? '✅ Sí' : '❌ No'}\n`;
+        f += `🏋️ Gimnasio: ${gimnasio === 'Sí' ? '✅ Sí' : '❌ No'}\n`;
+        f += `🏊 Pileta: ${pileta === 'Sí' ? '✅ Sí' : '❌ No'}\n`;
+        f += `🎉 SUM: ${sum === 'Sí' ? '✅ Sí' : '❌ No'}\n\n`;
         
-        f += `TIEMPO DE CONTRATO: ${tiempoTxt}\n`;
-        f += `AJUSTE: Cuatrimestral ICL\n`;
-        f += `VALOR MENSUAL: ${txtMensual}\n`;
-        f += `TOTAL CONTRATO X ${tiempoTxt}: ${txtTotalContrato}\n\n`;
+        f += `📅 TIEMPO DE CONTRATO: ${tiempoTxt}\n`;
+        f += `📈 AJUSTE: Cuatrimestral ICL\n`;
+        f += `💰 VALOR MENSUAL: ${txtMensual}\n`;
+        f += `📊 TOTAL CONTRATO X ${tiempoTxt}: ${txtTotalContrato}\n\n`;
         
-        f += `GASTOS\n`;
-        f += `Alquiler adelantado: ${txtAdelantado}\n`;
-        f += `50% Sellado DRG: ${txtSellado}\n`;
-        f += `Depósito de garantía: ${txtDepositoFicha}\n`;
-        f += `Honorarios inmobiliarios: ${txtHonorarios}\n`;
-        f += `Escribanía cada parte\n\n`;
+        f += `💰 GASTOS\n`;
+        f += `• Alquiler adelantado: ${txtAdelantado}\n`;
+        f += `• 50% Sellado DRG: ${txtSellado}\n`;
+        f += `• Depósito de garantía: ${txtDepositoFicha}\n`;
+        f += `• Honorarios inmobiliarios: ${txtHonorarios}\n`;
+        f += `• Escribanía cada parte\n\n`;
         
-        f += `TOTAL A PAGAR: ${txtTotalAPagar}\n\n`;
+        f += `🧮 TOTAL A PAGAR: ${txtTotalAPagar}\n\n`;
         
-        f += `REQUISITOS\n\n`;
-        f += `Inquilino con recibo de sueldo, monotributista o IVA Responsable Inscripto.\n`;
-        f += `Garante con recibo de sueldo, monotributista o IVA Responsable Inscripto.\n`;
-        f += `En caso de no poseer garantes, contratar un seguro de caución.\n`;
-        f += `Seguro contra incendios.\n\n`;
+        f += `📋 REQUISITOS\n\n`;
+        f += `👤 Inquilino con recibo de sueldo, monotributista o IVA Responsable Inscripto.\n`;
+        f += `👥 Garante con recibo de sueldo, monotributista o IVA Responsable Inscripto.\n`;
+        f += `🛡️ En caso de no poseer garantes, contratar un seguro de caución.\n`;
+        f += `🔥 Seguro contra incendios.\n\n`;
         
-        f += `INQUILINO\n\n`;
-        f += `Fotocopia DNI frente y dorso.\n`;
-        f += `Constancia de CUIL o CUIT.\n`;
-        f += `Fotocopia de los últimos 3 recibos de sueldo o últimos 3 meses de monotributo / IVA Responsable Inscripto DDJJ.\n`;
-        f += `Mail y teléfono celular.\n\n`;
+        f += `🆔 INQUILINO\n\n`;
+        f += `🔹 Fotocopia DNI frente y dorso.\n`;
+        f += `🔹 Constancia de CUIL o CUIT.\n`;
+        f += `🔹 Fotocopia de los últimos 3 recibos de sueldo o últimos 3 meses de monotributo / IVA Responsable Inscripto DDJJ.\n`;
+        f += `🔹 Mail y teléfono celular.\n\n`;
         
-        f += `GARANTES\n\n`;
-        f += `Fotocopia DNI frente y dorso.\n`;
-        f += `Constancia de CUIL o CUIT.\n`;
-        f += `Fotocopia de los últimos 3 recibos de sueldo o últimos 3 meses de monotributo / IVA Responsable Inscripto DDJJ.\n`;
-        f += `Mail y teléfono celular.\n\n`;
-        
-        f += `CONDICIONES\n\n`;
-        f += `Las reservas/señas se realizan con el 50% del valor del alquiler.\n`;
-        f += `Se otorgan 5 días hábiles para presentar la documentación necesaria.\n`;
-        f += `En caso de presentar algún requisito y haya sido rechazado, se otorgan 2 días más para volver a presentar.\n`;
-        f += `Si no se presentan en tiempo y forma dichos requisitos, el monto de reserva/seña queda sin efecto a favor de la inmobiliaria.\n`;
-        f += `Sin derecho a ser devueltos.`;
-
-        document.getElementById('resultadoTexto').innerText = f;
-    }
-
-    function copiarTextoFicha() {
-        const txt = document.getElementById('resultadoTexto').innerText;
-        navigator.clipboard.writeText(txt).then(() => {
-            alert("✅ Ficha técnica copiada con éxito.");
-        });
-    }
-
-    // PERSISTENCIA LOCAL (GUARDADO INTERNO)
-    function guardarPropiedadLocal() {
-        const id = document.getElementById('id_propiedad').value.trim();
-        if (!id) {
-            alert("Escribí un nombre para identificar y guardar esta ficha.");
-            return;
-        }
-
-        const dataPack = {
-            nombre_edificio: document.getElementById('nombre_edificio').value,
-            operacion: document.querySelector('input[name="operacion"]:checked').value,
-            dormitorios: document.getElementById('dormitorios').value,
-            valor_mensual: document.getElementById('valor_mensual').value,
-            tiene_expensas: document.querySelector('input[name="tiene_expensas"]:checked').value,
-            monto_expensas: document.getElementById('monto_expensas').value,
-            detalle_ambientes: document.getElementById('detalle_ambientes').value,
-            cochera: document.querySelector('input[name="cochera"]:checked').value,
-            mascotas: document.querySelector('input[name="mascotas"]:checked').value,
-            balcon: document.querySelector('input[name="balcon"]:checked').value,
-            gimnasio: document.querySelector('input[name="gimnasio"]:checked').value,
-            pileta: document.querySelector('input[name="pileta"]:checked').value,
-            sum: document.querySelector('input[name="sum"]:checked').value,
-            tiempo_contrato: document.getElementById('tiempo_contrato').value,
-            g_adelantado: document.getElementById('g_adelantado').value,
-            g_sellado: document.getElementById('g_sellado').value,
-            deposito_tipo: document.querySelector('input[name="deposito_tipo"]:checked').value,
-            g_deposito: document.getElementById('g_deposito').value,
-            g_honorarios: document.getElementById('g_honorarios').value
-        };
-
-        localStorage.setItem('cortes_crm_v3_' + id, JSON.stringify(dataPack));
-        alert(`💾 Ficha "${id}" guardada con éxito en la sección superior.`);
-        document.getElementById('id_propiedad').value = '';
-        renderizarListaGuardados();
-    }
-
-    function cargarFichaGuardada(idClave) {
-        const raw = localStorage.getItem(idClave);
-        if (!raw) return;
-        const d = JSON.parse(raw);
-
-        document.getElementById('id_propiedad').value = idClave.replace('cortes_crm_v3_', '');
-        document.getElementById('nombre_edificio').value = d.nombre_edificio || '';
-        
-        document.querySelector(`input[name="operacion"][value="${d.operacion || 'Alquiler'}"]`).checked = true;
-        document.getElementById('dormitorios').value = d.dormitorios || '1 dormitorio';
-        document.getElementById('valor_mensual').value = d.valor_mensual || '';
-        
-        document.querySelector(`input[name="tiene_expensas"][value="${d.tiene_expensas || 'No'}"]`).checked = true;
-        alternarExpensasMonto(d.tiene_expensas || 'No');
-        document.getElementById('monto_expensas').value = d.monto_expensas || '';
-        
-        document.getElementById('detalle_ambientes').value = d.detalle_ambientes || '';
-        
-        document.querySelector(`input[name="cochera"][value="${d.cochera || 'No'}"]`).checked = true;
-        document.querySelector(`input[name="mascotas"][value="${d.mascotas || 'No'}"]`).checked = true;
-        document.querySelector(`input[name="balcon"][value="${d.balcon || 'No'}"]`).checked = true;
-        document.querySelector(`input[name="gimnasio"][value="${d.gimnasio || 'No'}"]`).checked = true;
-        document.querySelector(`input[name="pileta"][value="${d.pileta || 'No'}"]`).checked = true;
-        document.querySelector(`input[name="sum"][value="${d.sum || 'No'}"]`).checked = true;
-        
-        document.getElementById('tiempo_contrato').value = d.tiempo_contrato || '24 meses';
-        document.getElementById('g_adelantado').value = d.g_adelantado || '';
-        document.getElementById('g_sellado').value = d.g_sellado || '';
-        
-        document.querySelector(`input[name="deposito_tipo"][value="${d.deposito_tipo || 'Pagaré'}"]`).checked = true;
-        alternarDepositoMonto(d.deposito_tipo || 'Pagaré');
-        document.getElementById('g_deposito').value = d.g_deposito || '';
-        document.getElementById('g_honorarios').value = d.g_honorarios || '';
-
-        calcularPreciosYFicha();
-    }
-
-    function eliminarFichaGuardada(e, idClave) {
-        e.stopPropagation();
-        if(confirm("¿Eliminar este registro guardado?")) {
-            localStorage.removeItem(idClave);
-            renderizarListaGuardados();
-            calcularPreciosYFicha();
-        }
-    }
-
-    function renderizarListaGuardados() {
-        const contenedor = document.getElementById('contenedorItemsGuardados');
-        contenedor.innerHTML = '';
-        let contador = 0;
-
-        for (let i = 0; i < localStorage.length; i++) {
-            const clave = localStorage.key(i);
-            if (clave.startsWith('cortes_crm_v3_')) {
-                contador++;
-                const nombreLindo = clave.replace('cortes_crm_v3_', '');
-                
-                const item = document.createElement('div');
-                item.className = 'item-guardado';
-                item.setAttribute('onclick', `cargarFichaGuardada('${clave}')`);
-                item.innerHTML = `🏢 ${nombreLindo} <button class="btn-borrar-item" onclick="eliminarFichaGuardada(event, '${clave}')">×</button>`;
-                
-                contenedor.appendChild(item);
-            }
-        }
-
-        if (contador === 0) {
-            contenedor.innerHTML = '<span style="font-size:13px; color:#94a3b8; font-weight:500;">No hay fichas guardadas actualmente en este navegador.</span>';
-        }
-    }
-
-    // Inicio automático del sistema
-    renderizarListaGuardados();
-    calcularPreciosYFicha();
-</script>
-
-</body>
-</html>
+        f += `🔑 GARANTES\n\n`;
+        f += `🔹 Fotocopia DNI frente y dorso.\n`;
+        f += `🔹 Constancia de CUIL o CUIT.\n`;
+        f += `🔹 Fo
