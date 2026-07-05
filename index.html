@@ -3,71 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis Propiedades</title>
+    <title>Catálogo Inmobiliario</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f8fafc; color: #334155; margin: 0; padding: 20px; }
-        header { text-align: center; padding: 30px 0; }
-        h1 { color: #1e293b; margin: 0; }
-        .contenedor { max-width: 800px; margin: 0 auto; }
-        .propiedad { background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 30px; overflow: hidden; display: flex; flex-direction: column; }
-        .foto { width: 100%; height: 250px; object-fit: cover; }
-        .info { padding: 20px; text-align: left; }
-        .precio { font-size: 24px; color: #0f172a; font-weight: bold; margin: 0 0 10px 0; }
-        .titulo { font-size: 18px; margin: 0 0 10px 0; color: #475569; }
-        .descripcion { font-size: 14px; color: #64748b; line-height: 1.5; }
-        .requisitos { background: #f1f5f9; padding: 15px; border-radius: 8px; margin: 15px 0; }
-        .requisitos h4 { margin: 0 0 5px 0; color: #1e293b; }
-        .requisitos ul { margin: 0; padding-left: 20px; font-size: 14px; }
-        .btn-whatsapp { display: block; text-align: center; background: #25d366; color: white; text-decoration: none; padding: 12px; border-radius: 8px; font-weight: bold; margin-top: 15px; }
+        :root {
+            --primary: #0f172a;
+            --accent: #25d366;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --bg: #f8fafc;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: var(--text-main); margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+        
+        /* Encabezado */
+        header { max-width: 1100px; margin: 0 auto; padding: 60px 20px 30px 20px; text-align: left; }
+        header h1 { font-size: 32px; font-weight: 800; color: var(--primary); margin: 0 0 8px 0; letter-spacing: -0.5px; }
+        header p { font-size: 16px; color: var(--text-muted); margin: 0; }
+        
+        /* Grilla de propiedades */
+        .grid { max-width: 1100px; margin: 0 auto; padding: 0 20px 60px 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
+        
+        /* Tarjeta Profesional */
+        .tarjeta-link { text-decoration: none; color: inherit; }
+        .card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04); border: 1px solid #e2e8f0; transition: transform 0.2s ease, box-shadow 0.2s ease; display: flex; flex-direction: column; height: 100%; }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08); }
+        
+        .img-contenedor { position: relative; width: 100%; height: 220px; background: #e2e8f0; }
+        .foto { width: 100%; height: 100%; object-fit: cover; }
+        .badge { position: absolute; top: 15px; left: 15px; background: rgba(15, 23, 42, 0.85); color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; backdrop-filter: blur(4px); }
+        
+        .info { padding: 24px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .precio { font-size: 24px; font-weight: 700; color: var(--primary); margin: 0 0 6px 0; }
+        .titulo { font-size: 18px; font-weight: 600; color: var(--primary); margin: 0 0 10px 0; line-height: 1.4; }
+        .detalles { font-size: 14px; color: var(--text-muted); margin-bottom: 0; display: flex; gap: 15px; }
+        .detalles span { display: flex; align-items: center; gap: 4px; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Mis Propiedades Disponibles</h1>
-        <p>Hacé clic en el botón para consultarme por WhatsApp</p>
+        <h1>Propiedades Destacadas</h1>
+        <p>Explorá nuestro catálogo exclusivo. Hacé clic en cualquier propiedad para ver los detalles completos.</p>
     </header>
 
-    <div class="contenedor">
+    <div class="grid">
 
         <!-- PROPIEDAD 1 -->
-        <div class="propiedad">
-            <!-- Podés cambiar este link por la foto de tu propiedad -->
-            <img class="foto" src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800" alt="Foto Propiedad">
-            <div class="info">
-                <p class="precio">$ 450.000 / mes</p>
-                <h2 class="titulo">Depto 2 Ambientes con Balcón - Palermo</h2>
-                <p class="descripcion">Hermoso departamento, súper luminoso. Cuenta con cocina integrada, baño completo y habitacion con placard empotrado. Excelente zona cercana a subtes.</p>
-                <div class="requisitos">
-                    <h4>📋 Requisitos:</h4>
-                    <ul>
-                        <li>Mes de adelanto y mes de depósito.</li>
-                        <li>Garantía propietaria o seguro de caución.</li>
-                        <li>Recibo de sueldo demostrable.</li>
-                    </ul>
+        <a href="palermo.html" class="tarjeta-link">
+            <div class="card">
+                <div class="img-contenedor">
+                    <span class="badge">Alquiler</span>
+                    <!-- Podés cambiar este enlace por la foto real de tu propiedad -->
+                    <img class="foto" src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800" alt="Propiedad en Palermo">
                 </div>
-                <!-- CAMBIA EL NUMERO LUEGO DE WA.ME/ POR EL TUYO (Sin el signo +) -->
-                <a href="https://wa.me/5491100000000?text=Hola!%20Me%20interesa%20el%20depto%20de%20Palermo" class="btn-whatsapp" target="_blank">Consultar por WhatsApp</a>
+                <div class="info">
+                    <div>
+                        <p class="precio">$ 450.000 <span style="font-size: 14px; font-weight: 400; color: var(--text-muted);">/ mes</span></p>
+                        <h2 class="titulo">Depto 2 Ambientes con Balcón</h2>
+                    </div>
+                    <div class="detalles">
+                        <span>📍 Palermo, CABA</span>
+                        <span>🛏️ 1 Dorm.</span>
+                    </div>
+                </div>
             </div>
-        </div>
+        </a>
 
         <!-- PROPIEDAD 2 -->
-        <div class="propiedad">
-            <img class="foto" src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800" alt="Foto Propiedad">
-            <div class="info">
-                <p class="precio">$ 600.000 / mes</p>
-                <h2 class="titulo">Casa PH 3 Ambientes con Patio - Colegiales</h2>
-                <p class="descripcion">PH entrada independiente sin expensas. Dos dormitorios amplios, living comedor diario, cocina reciclada a nuevo y patio con parrilla.</p>
-                <div class="requisitos">
-                    <h4>📋 Requisitos:</h4>
-                    <ul>
-                        <li>Garantía de CABA o seguro Finaer.</li>
-                        <li>Ingresos comprobables que tripliquen el alquiler.</li>
-                    </ul>
+        <a href="colegiales.html" class="tarjeta-link">
+            <div class="card">
+                <div class="img-contenedor">
+                    <span class="badge">Alquiler</span>
+                    <img class="foto" src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800" alt="Propiedad en Colegiales">
                 </div>
-                <a href="https://wa.me/5491100000000?text=Hola!%20Me%20interesa%20el%20PH%20de%20Colegiales" class="btn-whatsapp" target="_blank">Consultar por WhatsApp</a>
+                <div class="info">
+                    <div>
+                        <p class="precio">$ 600.000 <span style="font-size: 14px; font-weight: 400; color: var(--text-muted);">/ mes</span></p>
+                        <h2 class="titulo">Casa PH 3 Ambientes con Patio</h2>
+                    </div>
+                    <div class="detalles">
+                        <span>📍 Colegiales, CABA</span>
+                        <span>🛏️ 2 Dorm.</span>
+                    </div>
+                </div>
             </div>
-        </div>
+        </a>
 
     </div>
 
