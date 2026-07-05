@@ -2,20 +2,53 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mis Propiedades</title>
     <style>
         body { font-family: sans-serif; background: #f0f2f5; text-align: center; padding: 50px; }
-        .tarjeta { background: white; max-width: 400px; margin: 0 auto; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .tarjeta { background: white; max-width: 400px; margin: 20px auto; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
         h1 { color: #1e293b; }
         .precio { font-size: 24px; color: green; font-weight: bold; }
+        .btn-admin { display: inline-block; margin-top: 30px; color: #64748b; text-decoration: none; font-size: 14px; border: 1px solid #cbd5e1; padding: 5px 10px; border-radius: 5px; }
     </style>
+    <!-- Cargamos el administrador de respaldo por si querés activarlo -->
+    <script src="https://unpkg.com/@staticcms/core@^4.0.0/dist/static-cms-core.js"></script>
 </head>
 <body>
+
     <h1>Catálogo de Propiedades</h1>
+    
+    <!-- Aquí se mostrarán tus propiedades -->
     <div class="tarjeta">
         <h2>Depto 2 Ambientes - Palermo</h2>
         <p class="precio">$ 450.000 / mes</p>
         <p>Requisitos: Garantía e ingresos demostrables.</p>
     </div>
+
+    <!-- Tu acceso secreto al panel -->
+    <a href="#admin" class="btn-admin" onclick="arrancarAdmin()">⚙️ Acceso Propietario</a>
+
+    <script>
+        function arrancarAdmin() {
+            // Si hacés clic en el acceso, transformamos la página en tu panel de control
+            document.body.innerHTML = '<div id="nc-root"></div>';
+            window.initCMS({
+                config: {
+                    backend: { name: "github", repo: "mandaditos-envios/listapropiedades", branch: "main", gatekeeper_url: "https://api.staticcms.org" },
+                    media_folder: "images", public_folder: "/images",
+                    collections: [{
+                        name: "propiedades", label: "Propiedades", folder: "_propiedades", create: true, slug: "{{slug}}",
+                        fields: [
+                            { label: "Título", name: "title", widget: "string" },
+                            { label: "Precio", name: "precio", widget: "string" },
+                            { label: "Descripción", name: "body", widget: "markdown" }
+                        ]
+                    }]
+                }
+            });
+        }
+        // Si entrás directo con #admin al final de la URL, arranca el panel
+        if(window.location.hash === '#admin') { setTimeout(arrancarAdmin, 500); }
+    </script>
 </body>
 </html>
